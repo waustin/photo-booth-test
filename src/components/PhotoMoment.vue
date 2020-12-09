@@ -14,12 +14,21 @@
 
                     <h1 v-if="!user_photo && !is_dragging">Drop An Image</h1>
                     <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
+                
+                    <!-- on stage images -->
+                    <img class="prop-stage-image"
+                         v-for="(prop, idx) in props_on_stage"
+                         :key="'stage-prop-' + idx" 
+                         :src="prop.src" 
+                         :style="{ left: prop.x + '%', top: prop.y + '%' }"/>
                 </div>
             </div>
             <div class="column is-two-fifths sidebar">
                 <h4>Drag A Prop onto the Stage</h4>
                 <div class="prop-list">
-                    <img v-for="(prop, idx) in prop_images" :key="idx" :src="prop" />
+                    <img v-for="(prop, idx) in prop_images" 
+                         :key="'prop-' + idx" :src="prop" 
+                         draggable="true"/>
                 </div>
             </div>
         </div>
@@ -80,6 +89,15 @@ export default {
             
             // Check for dropping of props
             console.log(event);
+
+            let stageProp = {};
+            stageProp.x = event.clientX;
+            stageProp.y = event.clientY;
+
+            let imgData = event.dataTransfer.getData("text");
+            stageProp.src = imgData.src;
+
+            this.props_on_stage.push(stageProp);
             
         }
     }
