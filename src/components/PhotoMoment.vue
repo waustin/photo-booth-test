@@ -16,8 +16,12 @@
                     <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
                 </div>
             </div>
-            <div class="column is-two-fifths">
-                <p>Sidebar</p>
+            <div class="column is-two-fifths sidebar">
+                <h4>Drag A Prop onto the Stage</h4>
+                <div class="prop-list">
+                    <img src="" alt="Prop 1" />
+                    <img src="" alt="Prop 2" />
+                </div>
             </div>
         </div>
     </div>
@@ -92,10 +96,25 @@ export default {
         img {
             max-width: 100%;
             position: absolute;
+            display: block;
         }
         img.bg-image {
             top: 0;
             left: 0;
+        }
+    }
+    .sidebar {
+        h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+    }
+    .prop-list {
+        border: 1px solid #999;
+        padding: 1rem;
+        img {
+            display: block;
+            margin-bottom: 0.5rem;
         }
     }
 </style>
