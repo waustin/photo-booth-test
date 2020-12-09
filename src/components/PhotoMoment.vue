@@ -19,8 +19,7 @@
             <div class="column is-two-fifths sidebar">
                 <h4>Drag A Prop onto the Stage</h4>
                 <div class="prop-list">
-                    <img src="" alt="Prop 1" />
-                    <img src="" alt="Prop 2" />
+                    <img v-for="(prop, idx) in prop_images" :key="idx" :src="prop" />
                 </div>
             </div>
         </div>
@@ -36,8 +35,11 @@ export default {
             is_dragging: false,
             invalid_image_format: false,
             user_photo: null,
-            draggable_images: [], // the images that are dragged on top of the stage
-            drag_images_on_stage: [
+            prop_images: [
+                './images/prop-1.png', './images/prop-2.png', 
+                './images/prop-3.png', './images/prop-4.png'
+            ], // the images that are dragged on top of the stage
+            props_on_stage: [
                 // should be an array of dictionaries. { image_src/id, xpos, ypos, zindex?}
             ]
         }
@@ -55,6 +57,7 @@ export default {
             console.log('drop');
             this.is_dragging = false;
 
+            // For when a file background is dropped
             let files = event.dataTransfer.files;
             if(files.length == 1 ) {
                 // Limit to one file
@@ -74,6 +77,9 @@ export default {
                     this.invalid_image_format = true;
                 }
             }
+            
+            // Check for dropping of props
+            console.log(event);
             
         }
     }
@@ -115,6 +121,10 @@ export default {
         img {
             display: block;
             margin-bottom: 0.5rem;
+            width: 100px;
+            &:hover {
+                cursor: grabbing;
+            }
         }
     }
 </style>
