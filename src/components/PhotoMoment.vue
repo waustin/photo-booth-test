@@ -31,6 +31,7 @@
                     <img v-for="(prop, idx) in prop_images" 
                          :key="'prop-' + idx" :src="prop" 
                          @dragstart="startPropDrag($event, prop)"
+                         @dragend="stopPropDrag($event, prop)"
                          draggable="true"/>
                 </div>
             </div>
@@ -39,7 +40,8 @@
 </template>
 
 <script>
-
+// TODO: figure out how to distinguish image drops vs prop drops
+// How to clear out the prop being dragged
 export default {
     name: "PhotoMoment",
     data: function() {
@@ -71,6 +73,9 @@ export default {
             console.log(event.dataTransfer.items[0]);
             console.log('--------');
         },
+        stopPropDrag(event, prop) {
+            this.prop_being_dragged = null;
+        },
         dragOver(event) {
           //  console.log('dragOver');
           this.is_dragging = true;
@@ -82,7 +87,7 @@ export default {
         drop(event){
             console.log('drop');
             this.is_dragging = false;
-/*
+
             // For when a file background is dropped
             let files = event.dataTransfer.files;
             if(files.length == 1 ) {
@@ -102,21 +107,23 @@ export default {
                     // File is not an image, show an error
                     this.invalid_image_format = true;
                 }
+            } 
+            else if(this.prop_being_dragged) {
+            
+                // Check for dropping of props
+                console.log(event);
+
+                let stageProp = {};
+                stageProp.x = event.clientX;
+                stageProp.y = event.clientY;
+    /*
+                let propSrc = event.dataTransfer.getData("propSrc");
+                stageProp.src = propSrc;
+                */
+                stageProp.src = this.prop_being_dragged;
+
+                this.props_on_stage.push(stageProp);
             }
-            */
-            // Check for dropping of props
-            console.log(event);
-
-            let stageProp = {};
-            stageProp.x = event.clientX;
-            stageProp.y = event.clientY;
-/*
-            let propSrc = event.dataTransfer.getData("propSrc");
-            stageProp.src = propSrc;
-            */
-            stageProp.src = this.prop_being_dragged;
-
-            this.props_on_stage.push(stageProp);
             
         }
     }
@@ -144,6 +151,7 @@ export default {
         img.bg-image {
             top: 0;
             left: 0;
+            z-index: 0;
         }
     }
     .sidebar {
