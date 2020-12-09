@@ -20,9 +20,7 @@
                          v-for="(prop, idx) in props_on_stage"
                          :key="'stage-prop-' + idx" 
                          :src="prop.src" 
-                         />
-
-                <!-- :style="{ left: prop.x + '%', top: prop.y + '%' }"/> -->
+                         :style="{ left: prop.x + '%', top: prop.y + '%' }"/>
                 </div>
             </div>
             <div class="column is-two-fifths sidebar">
@@ -113,15 +111,11 @@ export default {
                 // Check for dropping of props
                 console.log(event);
 
-                let stageProp = {};
-                stageProp.x = event.clientX;
-                stageProp.y = event.clientY;
-    /*
-                let propSrc = event.dataTransfer.getData("propSrc");
-                stageProp.src = propSrc;
-                */
-                stageProp.src = this.prop_being_dragged;
-
+                let stageProp = {
+                    x: (event.offsetX / event.target.offsetWidth) * 100, //(event.offsetX / event.target.width) * 100,
+                    y: (event.offsetY / event.target.offsetHeight) * 100,
+                    src: this.prop_being_dragged, // event.dataTransfer.getData("propSrc");
+                };
                 this.props_on_stage.push(stageProp);
             }
             
@@ -152,6 +146,10 @@ export default {
             top: 0;
             left: 0;
             z-index: 0;
+        }
+        img.prop-stage-image {
+            width: 60px;
+            transform: translate(-50%, -50%);
         }
     }
     .sidebar {
