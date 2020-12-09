@@ -7,6 +7,8 @@
                     @dragover.prevent="dragOver"
                     @dragleave.prevent="dragLeave"
                     @drop.prevent="drop($event)">
+
+                    <img class="bg-image" v-if="user_photo"/>
                 </div>
             </div>
             <div class="column is-two-fifths">
@@ -22,6 +24,7 @@ export default {
     name: "PhotoMoment",
     data: function() {
         return {
+            is_dragging: false,
             user_photo: null,
             draggable_images: [], // the images that are dragged on top of the stage
             drag_images_on_stage: [
@@ -32,22 +35,33 @@ export default {
     methods: {
         dragOver(event) {
           //  console.log('dragOver');
+          this.is_dragging = true;
         },
         dragLeave(event) {
             console.log('dragLeave');
+            this.is_dragging = false;
         },
         drop(event){
             console.log('drop');
 
             let files = event.dataTransfer.files;
-            let file = files[0];
+            if(files.length == 1 ) {
+                // Limit to one file
+                let file = files[0];
+                console.log(file.type)
+                if(file.type.startsWith('image/')) {
 
-            let reader = new FileReader();
-            reader.onload = (f) => {
-                let src = f.target.result;
-                console.log('File Loaded');
+                    let reader = new FileReader();
+                    reader.onload = (f) => {
+                        let src = f.target.result;
+                        console.log('File Loaded');
+                    }
+                    reader.readAsDataURL(file);
+                    
+                } else {
+                    // File is not an image, show an error
+                }
             }
-            reader.readAsDataURL(file);
         }
     }
 }
