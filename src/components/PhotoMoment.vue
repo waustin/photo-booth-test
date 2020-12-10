@@ -49,7 +49,9 @@
 
                 <hr>
                 <div v-if="out_image" class="out-image-wrapper mt-2">
-                    <img :src="out_image" />
+                    <img :src="out_image" class="mb-3"/>
+                    <a download="your-image.png" 
+                        :href="out_image" class="button is-success">Download Image</a>
                 </div>
             </div>
         </div>
