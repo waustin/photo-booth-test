@@ -4,9 +4,9 @@
         <div class="columns">
             <div class="column">
                 <div class="photo-bg stage" ref="stage" id="stage"
-                    @dragover.prevent="dragOver"
-                    @dragleave.prevent="dragLeave"
-                    @drop.prevent="drop($event)">
+                    @dragover.stop.prevent="dragOverStage"
+                    @dragleave.stop.prevent="dragLeaveStage"
+                    @drop.stop.prevent="dropStage($event)">
 
                     <img class="bg-image" 
                         v-if="user_photo"
@@ -25,14 +25,22 @@
                          @dragstart="startPropMoveDrag($event, prop, idx)"
                          @dragend="stopPropMoveDrag($event, prop, idx)" />
                 </div>
+
+                <div v-if="is_prop_move_dragging" class="has-background-danger-dark delete-spot" 
+                    @dragover.stop.prevent="dragOverDelete"
+                    @dragleave.stop.prevent="dragLeaveDelete"
+                    @drop.stop.prevent="dropDelete($event)">
+                    <h4>Delete</h4>
+                </div>
+
             </div>
             <div class="column is-two-fifths sidebar">
                 <h4>Drag A Prop onto the Stage</h4>
                 <div class="prop-list">
                     <img v-for="(prop, idx) in prop_images" 
                          :key="'prop-' + idx" :src="prop" 
-                         @dragstart="startPropDrag($event, prop)"
-                         @dragend="stopPropDrag($event, prop)"
+                         @dragstart="startPropAddDrag($event, prop)"
+                         @dragend="stopPropAddDrag($event, prop)"
                          draggable="true"/>
                 </div>
             </div>
@@ -48,6 +56,8 @@ export default {
     data: function() {
         return {
             is_dragging: false,
+            is_prop_add_dragging: false,
+            is_prop_move_dragging: false,
             invalid_image_format: false,
             user_photo: null,
             prop_images: [
@@ -62,7 +72,9 @@ export default {
     },
     methods: {
         // Adding a prop to the stage
-        startPropDrag(event, prop) {
+        startPropAddDrag(event, prop) {
+            this.is_prop_add_dragging = true;
+
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData("propSrc", "FART");
@@ -72,12 +84,14 @@ export default {
                 drag_type: 'ADD_PROP'
             };
         },
-        stopPropDrag(event, prop) {
+        stopPropAddDrag(event, prop) {
+            this.is_prop_add_dragging = false;
             this.prop_being_dragged = null;
         },
 
         // Prop on Stage Drag Events
         startPropMoveDrag(event, prop, prop_id) {
+            this.is_prop_move_dragging = true;
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData("propSrc", "FART");
@@ -89,20 +103,21 @@ export default {
             };
         },
         stopPropMoveDrag(event, prop) {
+            this.is_prop_move_dragging = false;
             this.prop_being_dragged = null;
+            console.log('stopPropMoveDrag()')
         },
 
         // Stage Drag events
-        dragOver(event) {
-          //  console.log('dragOver');
+        dragOverStage(event) {
           this.is_dragging = true;
         },
-        dragLeave(event) {
-            console.log('dragLeave');
+        dragLeaveStage(event) {
+            console.log('dragLeaveStage');
             this.is_dragging = false;
         },
-        drop(event){
-            console.log('drop');
+        dropStage(event){
+            console.log('dropStage');
             this.is_dragging = false;
 
             // For when a file background is dropped
@@ -110,7 +125,6 @@ export default {
             if(files.length == 1 ) {
                 // Limit to one file
                 let file = files[0];
-                console.log(file.type)
                 if(file.type.startsWith('image/')) {
                     this.invalid_image_format = false;
                     let reader = new FileReader();
@@ -126,9 +140,7 @@ export default {
                 }
             } 
             else if(this.prop_being_dragged) {
-            
                 // Check for dropping of props
-                console.log(event);
                 if( this.prop_being_dragged.drag_type == 'ADD_PROP') {
                     let stageProp = {
                         x: (event.offsetX / event.target.offsetWidth) * 100, //(event.offsetX / event.target.width) * 100,
@@ -144,7 +156,20 @@ export default {
                     prop.y = (event.offsetY / event.target.offsetHeight) * 100;
                 }
             }
-            
+        },
+        // Drop on parent is how we can delete an item
+        dragOverDelete($event) {
+            console.log('dragOverDelete');
+        },
+        dragLeaveDelete($event) {
+            console.log('dragLeaveDelete');
+        },
+        dropDelete($event) {
+            console.log('dropDelete');
+            // If we are are moving a prop and it is dropped any where other than the stage, delete it
+            if(this.prop_being_dragged && this.prop_being_dragged.drag_type == 'MOVE_PROP') {
+                this.props_on_stage.splice(this.prop_being_dragged.prop_id, 1);
+            }
         }
     }
 }
@@ -194,6 +219,22 @@ export default {
             &:hover {
                 cursor: grabbing;
             }
+        }
+    }
+    .delete-spot {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+        h4 {
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+            margin-bottom: 0;
+            line-height: 1;
+            font-size: 1.3rem;
         }
     }
 </style>
