@@ -12,7 +12,8 @@
                         v-if="user_photo"
                         :src="user_photo" />
 
-                    <h1 v-if="!user_photo && !is_dragging">Drop An Image</h1>
+                    <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
+                    <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
                     <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
                 
                     <!-- on stage images -->
@@ -30,7 +31,7 @@
                     @dragover.stop.prevent="dragOverDelete"
                     @dragleave.stop.prevent="dragLeaveDelete"
                     @drop.stop.prevent="dropDelete($event)">
-                    <h4>Delete</h4>
+                    <h4>Drop Prop Here to Delete</h4>
                 </div>
 
             </div>
@@ -234,7 +235,7 @@ export default {
             text-transform: uppercase;
             margin-bottom: 0;
             line-height: 1;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
         }
     }
 </style>
