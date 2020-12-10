@@ -20,7 +20,10 @@
                          v-for="(prop, idx) in props_on_stage"
                          :key="'stage-prop-' + idx" 
                          :src="prop.src" 
-                         :style="{ left: prop.x + '%', top: prop.y + '%' }"/>
+                         :style="{ left: prop.x + '%', top: prop.y + '%' }"
+                         draggable="true"
+                         @dragstart="startPropMoveDrag($event, prop, idx)"
+                         @dragend="stopPropMoveDrag($event, prop, idx)" />
                 </div>
             </div>
             <div class="column is-two-fifths sidebar">
@@ -58,22 +61,38 @@ export default {
         }
     },
     methods: {
+        // Adding a prop to the stage
         startPropDrag(event, prop) {
             event.dataTransfer.dropEffect = 'move';
             event.dataTransfer.effectAllowed = 'move';
             event.dataTransfer.setData("propSrc", "FART");
 
-            this.prop_being_dragged = prop;
-
-            console.log('startPropDrag');
-            console.log(event.dataTransfer);
-            console.log(event.dataTransfer.types);
-            console.log(event.dataTransfer.items[0]);
-            console.log('--------');
+            this.prop_being_dragged = {
+                prop: prop,
+                drag_type: 'ADD_PROP'
+            };
         },
         stopPropDrag(event, prop) {
             this.prop_being_dragged = null;
         },
+
+        // Prop on Stage Drag Events
+        startPropMoveDrag(event, prop, prop_id) {
+            event.dataTransfer.dropEffect = 'move';
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData("propSrc", "FART");
+
+            this.prop_being_dragged = {
+                prop: prop,
+                prop_id: prop_id,
+                drag_type: 'MOVE_PROP'
+            };
+        },
+        stopPropMoveDrag(event, prop) {
+            this.prop_being_dragged = null;
+        },
+
+        // Stage Drag events
         dragOver(event) {
           //  console.log('dragOver');
           this.is_dragging = true;
@@ -110,13 +129,20 @@ export default {
             
                 // Check for dropping of props
                 console.log(event);
-
-                let stageProp = {
-                    x: (event.offsetX / event.target.offsetWidth) * 100, //(event.offsetX / event.target.width) * 100,
-                    y: (event.offsetY / event.target.offsetHeight) * 100,
-                    src: this.prop_being_dragged, // event.dataTransfer.getData("propSrc");
-                };
-                this.props_on_stage.push(stageProp);
+                if( this.prop_being_dragged.drag_type == 'ADD_PROP') {
+                    let stageProp = {
+                        x: (event.offsetX / event.target.offsetWidth) * 100, //(event.offsetX / event.target.width) * 100,
+                        y: (event.offsetY / event.target.offsetHeight) * 100,
+                        src: this.prop_being_dragged.prop, // event.dataTransfer.getData("propSrc");
+                    };
+                    this.props_on_stage.push(stageProp);
+                } else if( this.prop_being_dragged.drag_type == 'MOVE_PROP') {
+                    console.log('MOVE PROP');
+                    // Find prop on list and change its x y
+                    let prop = this.props_on_stage[this.prop_being_dragged.prop_id];
+                    prop.x = (event.offsetX / event.target.offsetWidth) * 100;
+                    prop.y = (event.offsetY / event.target.offsetHeight) * 100;
+                }
             }
             
         }
