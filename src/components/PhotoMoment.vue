@@ -37,12 +37,19 @@
             </div>
             <div class="column is-two-fifths sidebar">
                 <h4>Drag A Prop onto the Stage</h4>
-                <div class="prop-list">
+                <div class="prop-list mb-2">
                     <img v-for="(prop, idx) in prop_images" 
                          :key="'prop-' + idx" :src="prop" 
                          @dragstart="startPropAddDrag($event, prop)"
                          @dragend="stopPropAddDrag($event, prop)"
                          draggable="true"/>
+                </div>
+                <button type="button" class="button is-primary"
+                        @click="saveImage">Save</button>
+
+                <hr>
+                <div v-if="out_image" class="out-image-wrapper mt-2">
+                    <img :src="out_image" />
                 </div>
             </div>
         </div>
@@ -68,7 +75,8 @@ export default {
             prop_being_dragged: null,
             props_on_stage: [
                 // should be an array of dictionaries. { image_src/id, xpos, ypos, zindex?}
-            ]
+            ],
+            out_image: null,
         }
     },
     methods: {
@@ -171,6 +179,14 @@ export default {
             if(this.prop_being_dragged && this.prop_being_dragged.drag_type == 'MOVE_PROP') {
                 this.props_on_stage.splice(this.prop_being_dragged.prop_id, 1);
             }
+        },
+        // Try to save the image
+        async saveImage() {
+            const stageEl = this.$refs.stage;
+            const options = {
+                type: 'dataURL'
+            };
+            this.out_image = await this.$html2canvas(stageEl, options);
         }
     }
 }
@@ -237,5 +253,10 @@ export default {
             line-height: 1;
             font-size: 1.2rem;
         }
+    }
+    .out-image-wrapper {
+        padding: 4px;
+        background-color: white;
+        border: 2px solid #999;
     }
 </style>
