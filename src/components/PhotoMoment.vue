@@ -186,7 +186,9 @@ export default {
         async saveImage() {
             const stageEl = this.$refs.stage;
             const options = {
-                type: 'dataURL'
+                type: 'dataURL',
+                windowWidth: 1600,
+                //windowHeight: 600,
             };
             this.out_image = await this.$html2canvas(stageEl, options);
         }
