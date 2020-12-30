@@ -1,22 +1,34 @@
 <template>
-  <div id="app" class="container">
-      <PhotoMoment />
+  <div id="app">
+    <div id="nav">
+      <router-link to="/photo-moment">Photo Moment</router-link> |
+      <router-link to="/background-remove">Background Test</router-link>
+    </div>
+    <div class="container">
+      <router-view/>
+    </div>
   </div>
 </template>
 
-<script>
-import PhotoMoment from './components/PhotoMoment.vue';
-
-export default {
-  name: 'App',
-  components: {
-    PhotoMoment
-  }
-}
-</script>
-
-<style>
+<style lang="scss">
 #app {
- 
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+
+#nav {
+  padding: 30px;
+
+  a {
+    font-weight: bold;
+    color: #2c3e50;
+
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>

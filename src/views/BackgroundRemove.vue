@@ -1,6 +1,6 @@
 <template>
-    <div class="photo-moment">
-        <h1>This is the photo moment</h1>
+    <div class="photo-moment background-remove">
+        <h1>This is the Background Removal photo moment</h1>
         <div class="columns">
             <div class="column">
                 <div class="photo-bg stage" ref="stage" id="stage"
@@ -9,44 +9,28 @@
                     @drop.stop.prevent="dropStage($event)">
 
                     <img class="bg-image" 
+
+                        :class="overlay_classes"
                         v-if="user_photo"
                         :src="user_photo" />
 
                     <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
                     <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
                     <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
-                
-                    <!-- on stage images -->
-                    <img class="prop-stage-image"
-                         v-for="(prop, idx) in props_on_stage"
-                         :key="'stage-prop-' + idx" 
-                         :src="prop.src" 
-                         :style="{ left: prop.x + '%', top: prop.y + '%' }"
-                         draggable="true"
-                         @dragstart="startPropMoveDrag($event, prop, idx)"
-                         @dragend="stopPropMoveDrag($event, prop, idx)" />
                 </div>
 
-                <div v-if="is_prop_move_dragging" class="has-background-danger-dark delete-spot" 
-                    @dragover.stop.prevent="dragOverDelete"
-                    @dragleave.stop.prevent="dragLeaveDelete"
-                    @drop.stop.prevent="dropDelete($event)">
-                    <h4>Drop Prop Here to Delete</h4>
-                </div>
+
+        
 
             </div>
             <div class="column is-two-fifths sidebar">
-                <h4>Drag A Prop onto the Stage</h4>
-                <div class="prop-list mb-2">
-                    <img v-for="(prop, idx) in prop_images" 
-                         :key="'prop-' + idx" :src="prop" 
-                         @dragstart="startPropAddDrag($event, prop)"
-                         @dragend="stopPropAddDrag($event, prop)"
-                         draggable="true"/>
+                
+                <div class="mb-2">
+                    <button type="button" class="button is-info">Remove Photo Background</button>
                 </div>
                 <button type="button" class="button is-primary"
                         @click="saveImage">Save</button>
-
+             
                 <hr>
                 <div v-if="out_image" class="out-image-wrapper mt-2">
                     <img :src="out_image" class="mb-3"/>
@@ -62,62 +46,16 @@
 // TODO: figure out how to distinguish image drops vs prop drops
 // How to clear out the prop being dragged
 export default {
-    name: "PhotoMoment",
+    name: "BackgroundRemove",
     data: function() {
         return {
             is_dragging: false,
-            is_prop_add_dragging: false,
-            is_prop_move_dragging: false,
             invalid_image_format: false,
-            user_photo: null,
-            prop_images: [
-                './images/prop-1.png', './images/prop-2.png', 
-                './images/prop-3.png', './images/prop-4.png'
-            ], // the images that are dragged on top of the stage
-            prop_being_dragged: null,
-            props_on_stage: [
-                // should be an array of dictionaries. { image_src/id, xpos, ypos, zindex?}
-            ],
+            user_photo: null,  
             out_image: null,
         }
     },
     methods: {
-        // Adding a prop to the stage
-        startPropAddDrag(event, prop) {
-            this.is_prop_add_dragging = true;
-
-            event.dataTransfer.dropEffect = 'move';
-            event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData("propSrc", "FART");
-
-            this.prop_being_dragged = {
-                prop: prop,
-                drag_type: 'ADD_PROP'
-            };
-        },
-        stopPropAddDrag(event, prop) {
-            this.is_prop_add_dragging = false;
-            this.prop_being_dragged = null;
-        },
-
-        // Prop on Stage Drag Events
-        startPropMoveDrag(event, prop, prop_id) {
-            this.is_prop_move_dragging = true;
-            event.dataTransfer.dropEffect = 'move';
-            event.dataTransfer.effectAllowed = 'move';
-            event.dataTransfer.setData("propSrc", "FART");
-
-            this.prop_being_dragged = {
-                prop: prop,
-                prop_id: prop_id,
-                drag_type: 'MOVE_PROP'
-            };
-        },
-        stopPropMoveDrag(event, prop) {
-            this.is_prop_move_dragging = false;
-            this.prop_being_dragged = null;
-            console.log('stopPropMoveDrag()')
-        },
 
         // Stage Drag events
         dragOverStage(event) {
@@ -191,7 +129,7 @@ export default {
                 //windowHeight: 600,
             };
             this.out_image = await this.$html2canvas(stageEl, options);
-        }
+        },
     }
 }
 </script>
@@ -230,34 +168,7 @@ export default {
             margin-bottom: 1rem;
         }
     }
-    .prop-list {
-        border: 1px solid #999;
-        padding: 1rem;
-        img {
-            display: block;
-            margin-bottom: 0.5rem;
-            width: 100px;
-            &:hover {
-                cursor: grabbing;
-            }
-        }
-    }
-    .delete-spot {
-        margin-top: 2rem;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 40px;
-        h4 {
-            text-align: center;
-            color: white;
-            text-transform: uppercase;
-            margin-bottom: 0;
-            line-height: 1;
-            font-size: 1.2rem;
-        }
-    }
+   
     .out-image-wrapper {
         padding: 4px;
         background-color: white;
