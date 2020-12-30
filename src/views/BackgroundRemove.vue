@@ -3,30 +3,36 @@
         <h1>This is the Background Removal photo moment</h1>
         <div class="columns">
             <div class="column">
-                <div class="photo-bg stage" ref="stage" id="stage"
+                
+
+
+                <div  class="photo-bg stage mb-2" ref="stage" id="stage"
                     @dragover.stop.prevent="dragOverStage"
                     @dragleave.stop.prevent="dragLeaveStage"
                     @drop.stop.prevent="dropStage($event)">
 
-                    <img class="bg-image" 
-
-                        :class="overlay_classes"
+                     <img class="bg-image" id="BgImage"
                         v-if="user_photo"
                         :src="user_photo" />
+
 
                     <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
                     <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
                     <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
                 </div>
 
-
+                <div class="mb-4">
+                    <!--img id="image" :src="`${publicPath}images/person.jpg`" />-->
+                    <canvas id="canvas"></canvas>
+                </div>
         
 
             </div>
             <div class="column is-two-fifths sidebar">
                 
                 <div class="mb-2">
-                    <button type="button" class="button is-info">Remove Photo Background</button>
+                    <button type="button" class="button is-info"
+                        @click="doPersonSegment">Remove Photo Background</button>
                 </div>
                 <button type="button" class="button is-primary"
                         @click="saveImage">Save</button>
@@ -43,20 +49,35 @@
 </template>
 
 <script>
-// TODO: figure out how to distinguish image drops vs prop drops
-// How to clear out the prop being dragged
+import * as tf from '@tensorflow/tfjs';
+import * as bodyPix from '@tensorflow-models/body-pix'; 
+
+
+let bodyPixNet = null;
+
+
 export default {
     name: "BackgroundRemove",
     data: function() {
         return {
+            publicPath: process.env.BASE_URL,
             is_dragging: false,
             invalid_image_format: false,
             user_photo: null,  
             out_image: null,
         }
     },
+    created() {
+        console.log('created');
+        this.loadAndUseBodyPix();
+    },
     methods: {
-
+        async loadAndUseBodyPix() {
+            tf.getBackend();
+            console.log('Body Pix Load Start');
+            bodyPixNet = await bodyPix.load();
+            console.log( 'Body Pix Loaded');
+        },
         // Stage Drag events
         dragOverStage(event) {
           this.is_dragging = true;
@@ -120,6 +141,40 @@ export default {
                 this.props_on_stage.splice(this.prop_being_dragged.prop_id, 1);
             }
         },
+
+        async doPersonSegment() {
+            const outputStride = 16;
+            const segmentationThreshold = 0.5;
+
+            console.log('Body Pix: ');
+            console.log(bodyPixNet);
+
+            //const img = document.getElementById('image');
+            //const img = this.user_photo;
+            const img = document.getElementById('BgImage');
+
+            console.log('image');
+            console.log(img);
+
+            const segmentation = await bodyPixNet.segmentPerson(
+                                        img);
+
+            console.log(segmentation);
+            const coloredPartImage = bodyPix.toMask(segmentation);
+            const opacity = 0.7;
+            const flipHorizontal = false;
+            const maskBlurAmount = 0;
+            const canvas = document.getElementById('canvas');
+            // Draw the mask image on top of the original image onto a canvas.
+            // The colored part image will be drawn semi-transparent, with an opacity of
+            // 0.7, allowing for the original image to be visible under.
+            bodyPix.drawMask(
+                canvas, img, coloredPartImage, opacity, maskBlurAmount,
+                flipHorizontal);
+            
+
+        },
+
         // Try to save the image
         async saveImage() {
             const stageEl = this.$refs.stage;
