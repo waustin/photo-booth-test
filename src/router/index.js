@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import PhotoMoment from '../views/PhotoMoment.vue';
 import BackgroundRemove from '../views/BackgroundRemove.vue';
+import WebcamDemo from '../views/WebcamDemo.vue';
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/background-remove',
     name: 'Background Remove',
     component: BackgroundRemove,
+  },
+  {
+    path: '/webcam-demo',
+    name: 'Webcam Demo',
+    component: WebcamDemo,
   },
   /*{
     path: '/about',

@@ -1,6 +1,6 @@
 <template>
     <div class="photo-moment">
-        <h1>This is the photo moment</h1>
+        <h1 class="mb-2">Photo Moment Test</h1>
         <div class="columns">
             <div class="column">
                 <div class="photo-bg stage" ref="stage" id="stage"

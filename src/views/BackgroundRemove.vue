@@ -1,6 +1,6 @@
 <template>
     <div class="photo-moment background-remove">
-        <h1>This is the Background Removal photo moment</h1>
+        <h1 class="mb-2">Background Removal Test</h1>
         <div class="columns">
             <div class="column">
                 
@@ -75,7 +75,14 @@ export default {
         async loadAndUseBodyPix() {
             tf.getBackend();
             console.log('Body Pix Load Start');
-            bodyPixNet = await bodyPix.load();
+
+            bodyPixNet = await bodyPix.load({
+                architecture: 'MobileNetV1',
+                outputStride: 16,
+                multiplier: 0.75,
+                quantBytes: 4
+            });
+            
             console.log( 'Body Pix Loaded');
         },
         // Stage Drag events
@@ -143,11 +150,7 @@ export default {
         },
 
         async doPersonSegment() {
-            const outputStride = 16;
-            const segmentationThreshold = 0.5;
-
-            console.log('Body Pix: ');
-            console.log(bodyPixNet);
+            
 
             //const img = document.getElementById('image');
             //const img = this.user_photo;
@@ -156,12 +159,11 @@ export default {
             console.log('image');
             console.log(img);
 
-            const segmentation = await bodyPixNet.segmentPerson(
-                                        img);
+            const segmentation = await bodyPixNet.segmentPerson(img);
 
             console.log(segmentation);
             const coloredPartImage = bodyPix.toMask(segmentation);
-            const opacity = 0.7;
+            const opacity = 1;
             const flipHorizontal = false;
             const maskBlurAmount = 0;
             const canvas = document.getElementById('canvas');
