@@ -6,9 +6,9 @@
       <router-link to="/background-remove">Background Test</router-link>
 
     </div>
-    <div class="container">
+    <section class="section">
       <router-view />
-    </div>
+    </section>
   </div>
 </template>
 
