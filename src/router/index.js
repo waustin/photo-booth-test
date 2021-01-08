@@ -9,17 +9,17 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/photo-moment',
-    name: 'Photo Moment',
+    name: 'photo-moment',
     component: PhotoMoment
   },
   {
     path: '/background-remove',
-    name: 'Background Remove',
+    name: 'background-remove',
     component: BackgroundRemove,
   },
   {
     path: '/webcam-demo',
-    name: 'Webcam Demo',
+    name: 'webcam-demo',
     component: WebcamDemo,
   },
   /*{
