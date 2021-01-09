@@ -3,48 +3,73 @@
         <h1 class="mb-2">Photo Moment Test</h1>
         <div class="columns">
             <div class="column">
-                <div class="photo-bg stage mb-4" ref="stage" id="stage"
-                    @dragover.stop.prevent="dragOverStage"
-                    @dragleave.stop.prevent="dragLeaveStage"
-                    @drop.stop.prevent="dropStage($event)">
-
-                    <img class="bg-image" 
-
-                        :class="overlay_classes"
-                        v-if="user_photo"
-                        :src="user_photo" />
-
-                    <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
-                    <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
-                    <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
-                
-                    <!-- on stage images -->
-                    <img class="prop-stage-image"
-                         v-for="(prop, idx) in props_on_stage"
-                         :key="'stage-prop-' + idx" 
-                         :src="prop.src" 
-                         :style="{ left: prop.x + '%', top: prop.y + '%' }"
-                         draggable="true"
-                         @dragstart="startPropMoveDrag($event, prop, idx)"
-                         @dragend="stopPropMoveDrag($event, prop, idx)" />
-
-                    <div class="stage-overlay"
-                         ></div>
+                <div class="is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
+                    <div class="mr-2">Drag a Photo or&hellip;</div>
+                    <div class="file">
+                        <label class="file-label">
+                            <input class="file-input" type="file" @change="pickPhoto">
+                            <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="file-label">
+                                Pick a Photo&hellip;
+                            </span>
+                            </span>
+                        </label>
+                    </div>
+                    <div class="ml-2">
+                        <button 
+                            @click="openCamera"
+                            type="button" class="button">Open Camera</button>
+                    </div>
                 </div>
 
-               
-               <div class="file">
-                    <label class="file-label">
-                        <input class="file-input" type="file" @change="pickPhoto">
-                        <span class="file-cta">
-                        <span class="file-icon">
-                            <i class="fas fa-upload"></i>
-                        </span>
-                        <span class="file-label">
-                            Pick a Photo&hellip;
-                        </span>
-                        </span>
-                    </label>
+                <div class="camera-wrapper" v-if="is_camera_open">
+                    <video 
+                        v-if="is_camera_open"
+                        class="camera"
+                        ref="camera" autoplay
+                        :width="600" :height="400">
+                    </video>
+
+                    <button 
+                        v-if="isCameraOpen && !isLoading"
+                        class="button"
+                        type="button"
+                        @click="takePhoto">Take Photo</button>
+                </div>
+
+                <div class="photo-stage-wrapper" v-if="showPhotoStage">
+
+                    <div class="photo-bg stage mb-4" ref="stage" id="stage"
+                        @dragover.stop.prevent="dragOverStage"
+                        @dragleave.stop.prevent="dragLeaveStage"
+                        @drop.stop.prevent="dropStage($event)">
+
+                        <img class="bg-image" 
+
+                            :class="overlay_classes"
+                            v-if="user_photo"
+                            :src="user_photo" />
+
+                        <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
+                        <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
+                        <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
+                    
+                        <!-- on stage images -->
+                        <img class="prop-stage-image"
+                            v-for="(prop, idx) in props_on_stage"
+                            :key="'stage-prop-' + idx" 
+                            :src="prop.src" 
+                            :style="{ left: prop.x + '%', top: prop.y + '%' }"
+                            draggable="true"
+                            @dragstart="startPropMoveDrag($event, prop, idx)"
+                            @dragend="stopPropMoveDrag($event, prop, idx)" />
+
+                        <div class="stage-overlay"
+                            ></div>
+                    </div>
                 </div>
 
                 <div v-if="is_prop_move_dragging" class="has-background-danger-dark delete-spot" 
@@ -86,6 +111,10 @@ export default {
     name: "PhotoMoment",
     data: function() {
         return {
+            is_camera_loading: false,
+            is_camera_open: false,
+            has_camera_taken_photo: false,
+
             is_dragging: false,
             is_prop_add_dragging: false,
             is_prop_move_dragging: false,
@@ -226,6 +255,33 @@ export default {
             if( files.length > 0 ) {
                 this.readUserFile(files[0]);
             }
+        },
+        async openCamera() {
+            console.log('open camera');
+
+            this.is_camera_loading = true;
+            const constraints =  {
+                audio: false,
+                video: true
+            };
+
+            try{
+                let stream = await navigator.mediaDevices.getUserMedia(constraints);
+                this.is_camera_loading = false;
+                this.$refs.camera.srcObject = stream;
+            }
+            catch(error){
+                this.isLoading = false;
+                alert("Browser doese not support camera or there was an error");
+            }
+        },
+        takePhoto() {
+            console.log('take photo');
+        }
+    },
+    computed: {
+        showPhotoStage() {
+            return !this.is_camera_open;
         }
     }
 }
