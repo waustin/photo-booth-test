@@ -3,7 +3,7 @@
         <h1 class="mb-2">Photo Moment Test</h1>
         <div class="columns">
             <div class="column">
-                <div class="photo-bg stage" ref="stage" id="stage"
+                <div class="photo-bg stage mb-4" ref="stage" id="stage"
                     @dragover.stop.prevent="dragOverStage"
                     @dragleave.stop.prevent="dragLeaveStage"
                     @drop.stop.prevent="dropStage($event)">
@@ -32,13 +32,19 @@
                          ></div>
                 </div>
 
-                <div class="overlay-nav mt-2">
-                    <div class="overlay" @click="addOverlay('sepia')">
-                        Sepia
-                    </div>
-                    <div class="overlay" @click="addOverlay('blur')">
-                        Blur
-                    </div>
+               
+               <div class="file">
+                    <label class="file-label">
+                        <input class="file-input" type="file" @change="pickPhoto">
+                        <span class="file-cta">
+                        <span class="file-icon">
+                            <i class="fas fa-upload"></i>
+                        </span>
+                        <span class="file-label">
+                            Pick a Photo&hellip;
+                        </span>
+                        </span>
+                    </label>
                 </div>
 
                 <div v-if="is_prop_move_dragging" class="has-background-danger-dark delete-spot" 
@@ -58,6 +64,7 @@
                          @dragend="stopPropAddDrag($event, prop)"
                          draggable="true"/>
                 </div>
+                
                 <button type="button" class="button is-primary"
                         @click="saveImage">Save</button>
 
@@ -98,6 +105,21 @@ export default {
         }
     },
     methods: {
+        readUserFile(file) {
+            if( file.type.startsWith('image/') ) {
+                this.invalid_image_format = false;
+                let reader = new FileReader();
+                reader.onload = (f) => {
+                    this.user_photo = f.target.result;
+                    console.log('File Loaded');
+                }
+                reader.readAsDataURL(file);
+
+            } else {
+                // File is not an image, show an error
+                this.invalid_image_format = true;
+            }
+        },
         // Adding a prop to the stage
         startPropAddDrag(event, prop) {
             this.is_prop_add_dragging = true;
@@ -151,22 +173,8 @@ export default {
             let files = event.dataTransfer.files;
             if(files.length == 1 ) {
                 // Limit to one file
-                let file = files[0];
-                if(file.type.startsWith('image/')) {
-                    this.invalid_image_format = false;
-                    let reader = new FileReader();
-                    reader.onload = (f) => {
-                        this.user_photo = f.target.result;
-                        console.log('File Loaded');
-                    }
-                    reader.readAsDataURL(file);
-
-                } else {
-                    // File is not an image, show an error
-                    this.invalid_image_format = true;
-                }
-            } 
-            else if(this.prop_being_dragged) {
+                this.readUserFile(files[0]);
+            } else if(this.prop_being_dragged) {
                 // Check for dropping of props
                 if( this.prop_being_dragged.drag_type == 'ADD_PROP') {
                     let stageProp = {
@@ -210,14 +218,13 @@ export default {
         },
 
 
-        // Overlay stuff
-        addOverlay(type) {
-            console.log(type);
-            if(type == 'sepia') {
-                this.overlay_classes.push('sepia-overlay');
-            }
-            if( type == 'blur') {
-                 this.overlay_classes.push('blur-overlay');
+        pickPhoto(event) {
+            // pick a local photo to add to stage
+            console.log('Pick Photo');
+
+            let files = event.target.files;
+            if( files.length > 0 ) {
+                this.readUserFile(files[0]);
             }
         }
     }
