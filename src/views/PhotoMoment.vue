@@ -58,10 +58,11 @@
 
                         <img class="bg-image" v-if="user_photo" :src="user_photo" />
 
+<!--
                         <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
                         <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
                         <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
-                    
+                    -->
                         <!-- on stage images -->
                         <img class="prop-stage-image"
                             v-for="(prop, idx) in props_on_stage"
@@ -317,7 +318,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
     .photo-bg {
+        position: relative;
+        min-height: 400px;
+        border: 2px solid #666;
+        background-color: #CCC;
+        overflow: hidden;
+        /*
         width: 100%;
         min-height: 400px;
         height: 600px;
@@ -330,21 +338,32 @@ export default {
         position: relative;
         justify-content: center;
         align-items: center;
+        */
         img {
             max-width: 100%;
-            position: absolute;
+           // position: absolute;
             display: block;
             width: 100%;
             height: auto;
         }
+        /*
         img.bg-image {
             top: 0;
             left: 0;
             z-index: 0;
-        }
+        }*/
         img.prop-stage-image {
+            position: absolute;
+            height: auto;
+            display: block;
             width: 60px;
             transform: translate(-50%, -50%);
+            &:hover {
+                cursor: grab;
+            }
+            &:active {
+                cursor: grabbing;
+            }
         }
     }
     .sidebar {
@@ -361,6 +380,9 @@ export default {
             margin-bottom: 0.5rem;
             width: 100px;
             &:hover {
+                cursor: grab;
+            }
+            &:active {
                 cursor: grabbing;
             }
         }
