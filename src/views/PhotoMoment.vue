@@ -34,7 +34,7 @@
                     </video>
 
                     <canvas 
-                        
+                        v-show="show_canvas"
                         class="photo-taken-canvas"
                         id="photoTaken"
                         ref="canvas" :width="600" :height="450">
@@ -49,18 +49,14 @@
                     </button>
                 </div>
 
-                <div class="photo-stage-wrapper" v-if="showPhotoStage">
+                <div class="photo-stage-wrapper" v-show="showPhotoStage">
 
                     <div class="photo-bg stage mb-4" ref="stage" id="stage"
                         @dragover.stop.prevent="dragOverStage"
                         @dragleave.stop.prevent="dragLeaveStage"
                         @drop.stop.prevent="dropStage($event)">
 
-                        <img class="bg-image" 
-
-                            :class="overlay_classes"
-                            v-if="user_photo"
-                            :src="user_photo" />
+                        <img class="bg-image" v-if="user_photo" :src="user_photo" />
 
                         <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
                         <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
@@ -75,9 +71,6 @@
                             draggable="true"
                             @dragstart="startPropMoveDrag($event, prop, idx)"
                             @dragend="stopPropMoveDrag($event, prop, idx)" />
-
-                        <div class="stage-overlay"
-                            ></div>
                     </div>
                 </div>
 
@@ -123,6 +116,7 @@ export default {
             is_camera_loading: false,
             is_camera_open: false,
             has_camera_taken_photo: false,
+            show_canvas: false,
 
             is_dragging: false,
             is_prop_add_dragging: false,
@@ -138,8 +132,6 @@ export default {
                 // should be an array of dictionaries. { image_src/id, xpos, ypos, zindex?}
             ],
             out_image: null,
-
-            overlay_classes: [],
         }
     },
     methods: {
@@ -303,6 +295,9 @@ export default {
 
            const context = this.$refs.canvas.getContext('2d');
            context.drawImage(this.$refs.camera, 0, 0, 600, 450);
+           this.user_photo = this.$refs.canvas.toDataURL();
+
+           this.is_camera_open = false;
         }
     },
     computed: {
