@@ -30,14 +30,14 @@
                     <video 
                         class="camera"
                         ref="camera" autoplay
-                        :width="600" :height="450">
+                        :width="cam.width" :height="cam.height">
                     </video>
 
                     <canvas 
                         v-show="show_canvas"
                         class="photo-taken-canvas"
                         id="photoTaken"
-                        ref="canvas" :width="600" :height="450">
+                        ref="canvas" :width="cam.width" :height="cam.height">
                     </canvas>
 
                     <button 
@@ -117,6 +117,11 @@ export default {
             is_camera_open: false,
             has_camera_taken_photo: false,
             show_canvas: false,
+
+            cam: {
+                width: 1000,
+                height: 750,
+            },
 
             is_dragging: false,
             is_prop_add_dragging: false,
@@ -294,7 +299,7 @@ export default {
             */
 
            const context = this.$refs.canvas.getContext('2d');
-           context.drawImage(this.$refs.camera, 0, 0, 600, 450);
+           context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
            this.user_photo = this.$refs.canvas.toDataURL();
 
            this.is_camera_open = false;
@@ -314,7 +319,8 @@ export default {
 <style lang="scss" scoped>
     .photo-bg {
         width: 100%;
-        height: 400px;
+        min-height: 400px;
+        height: 600px;
         display: block;
         border: 2px solid #666;
         background-color: #CCC;
@@ -328,6 +334,8 @@ export default {
             max-width: 100%;
             position: absolute;
             display: block;
+            width: 100%;
+            height: auto;
         }
         img.bg-image {
             top: 0;
