@@ -30,8 +30,15 @@
                     <video 
                         class="camera"
                         ref="camera" autoplay
-                        :width="600" :height="400">
+                        :width="600" :height="450">
                     </video>
+
+                    <canvas 
+                        
+                        class="photo-taken-canvas"
+                        id="photoTaken"
+                        ref="canvas" :width="600" :height="450">
+                    </canvas>
 
                     <button 
                         v-if="canTakePhoto"
@@ -282,6 +289,20 @@ export default {
         },
         takePhoto() {
             console.log('take photo');
+            /*
+            if(!this.isPhotoTaken) {
+                this.isShotPhoto = true;
+
+                const FLASH_TIMEOUT = 50;
+
+                setTimeout(() => {
+                    this.isShotPhoto = false;
+                }, FLASH_TIMEOUT);
+            }
+            */
+
+           const context = this.$refs.canvas.getContext('2d');
+           context.drawImage(this.$refs.camera, 0, 0, 600, 450);
         }
     },
     computed: {
