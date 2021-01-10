@@ -3,8 +3,8 @@
         <h1 class="mb-2">Photo Moment Test</h1>
         <div class="columns">
             <div class="column">
-                <div class="is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
-                    <div class="mr-2">Drag a Photo or&hellip;</div>
+                <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
+                    <div class="mr-2">Drag a Photo <span class="sep"> OR </span></div>
                     <div class="file">
                         <label class="file-label">
                             <input class="file-input" type="file" @change="pickPhoto">
@@ -19,25 +19,27 @@
                         </label>
                     </div>
                     <div class="ml-2">
+                        <span class="sep">OR</span> 
                         <button 
                             @click="openCamera"
                             type="button" class="button">Open Camera</button>
                     </div>
                 </div>
 
-                <div class="camera-wrapper" v-if="is_camera_open">
+                <div class="camera-wrapper" v-show="is_camera_open">
                     <video 
-                        v-if="is_camera_open"
                         class="camera"
                         ref="camera" autoplay
                         :width="600" :height="400">
                     </video>
 
                     <button 
-                        v-if="isCameraOpen && !isLoading"
-                        class="button"
+                        v-if="canTakePhoto"
+                        class="button is-rounded is-info"
                         type="button"
-                        @click="takePhoto">Take Photo</button>
+                        @click="takePhoto">
+                        <span class="icon"><i class="fas fa-camera"></i></span>    
+                    </button>
                 </div>
 
                 <div class="photo-stage-wrapper" v-if="showPhotoStage">
@@ -268,11 +270,14 @@ export default {
             try{
                 let stream = await navigator.mediaDevices.getUserMedia(constraints);
                 this.is_camera_loading = false;
+                this.is_camera_open = true;
                 this.$refs.camera.srcObject = stream;
             }
             catch(error){
                 this.isLoading = false;
-                alert("Browser doese not support camera or there was an error");
+                alert("Error Opening Camera");
+                console.log("Create Camera Error");
+                console.log(error);
             }
         },
         takePhoto() {
@@ -282,6 +287,9 @@ export default {
     computed: {
         showPhotoStage() {
             return !this.is_camera_open;
+        },
+        canTakePhoto() {
+            return this.is_camera_open;
         }
     }
 }
@@ -381,29 +389,27 @@ export default {
         z-index: 1000000;
     }
 
-    .overlay-nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        .overlay {
-            border: 1px solid #555;
-            background-color: #DDD;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px;
-            cursor: pointer;
+    .stage-nav {
+        .sep {
+            font-style: italic;
+            color: #999;
+            padding: 0 0.5rem;
         }
     }
-
-
-    .blur-overlay {
-        filter: blur(20px);
+    // Camera Stuff
+    video {
+        display: block;
     }
-    .sepia-overlay {
-        //background-color: red;
-       // opacity: 0.5;
-        filter: sepia(60%);
+    .camera-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+    .camera {
+        margin-bottom: 2rem;
+        border: 2px solid #666;
+        padding: 2px;
+        background-color: #222;
     }
 </style>
