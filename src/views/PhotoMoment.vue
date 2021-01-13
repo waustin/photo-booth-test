@@ -120,6 +120,7 @@ export default {
         return {
             is_camera_loading: false,
             is_camera_open: false,
+            is_camera_taking_photo: false,
             has_camera_taken_photo: false,
             show_canvas: false,
 
@@ -282,20 +283,23 @@ export default {
             console.log('open camera');
 
             this.cam.error = null; // clear camera errors;
+            
             this.is_camera_loading = true;
+            this.is_camera_taking_photo = false;
+
             const constraints =  {
                 audio: false,
                 video: { facingMode: "user" }, // front facing camera on phones
             };
 
-            try{
+            try {
                 let stream = await navigator.mediaDevices.getUserMedia(constraints);
                 this.is_camera_loading = false;
                 this.is_camera_open = true;
                 this.$refs.camera.srcObject = stream;
             }
             catch(error){
-                this.isLoading = false;
+                this.is_camera_loading = false;
                 let err_msg = "Error Opening Camera: "
                 if(error.name == "NotFoundError" || error.name == "DevicesNotFoundError") {
                     // required track is missing 
@@ -327,6 +331,7 @@ export default {
         async closeCamera() {
             console.log('close camera');
             this.cam.error = null; // clear camera errors
+            this.is_camera_taking_photo = false;
             this.is_camera_loading = false;
             this.is_camera_open = false;
 
@@ -337,18 +342,15 @@ export default {
         },
         takePhoto() {
             console.log('take photo');
-            /*
-            if(!this.isPhotoTaken) {
-                this.isShotPhoto = true;
 
-                const FLASH_TIMEOUT = 50;
-
-                setTimeout(() => {
-                    this.isShotPhoto = false;
-                }, FLASH_TIMEOUT);
-            }
-            */
-
+            // Set a temp flag when the camera is taking a photo
+            // we can do a flash effect
+            this.is_camera_taking_photo = true;
+            const FLASH_TIMEOUT = 50;
+            setTimeout(() => {
+                this.is_camera_taking_photo = false;
+            }, FLASH_TIMEOUT);
+            
            const context = this.$refs.canvas.getContext('2d');
            context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
            this.user_photo = this.$refs.canvas.toDataURL();
