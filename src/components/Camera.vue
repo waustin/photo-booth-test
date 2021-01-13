@@ -41,6 +41,7 @@ export default {
                 width: 1000,
                 height: 750,
             },
+            photo: null,
         }
     },
     methods: {
@@ -71,6 +72,8 @@ export default {
                 this.is_camera_loading = false;
                 this.is_camera_open = true;
                 this.$refs.camera.srcObject = stream;
+
+                this.$emit('cameraOpen');
             }
             catch(error){
                 this.is_camera_loading = false;
@@ -99,6 +102,7 @@ export default {
                 console.log(error.message);
 
                 this.cam.error = err_msg;
+                this.$emit('cameraOpenError');
                 alert(err_msg);
             }
         },
@@ -111,16 +115,18 @@ export default {
             let tracks = this.$refs.camera.srcObject.getTracks();
 			tracks.forEach(track => {
 				track.stop();
-			});
+            });
+            
+            this.$emit('cameraClosed');
         },
         takePhoto() {
             console.log('take photo');
             
             const context = this.$refs.canvas.getContext('2d');
             context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
-            this.user_photo = this.$refs.canvas.toDataURL();
-
+            this.photo = this.$refs.canvas.toDataURL();
             this.closeCamera();
+            this.$emit('photoTaken', this.photo);
         }
     },
     computed: {

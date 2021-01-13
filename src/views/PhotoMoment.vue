@@ -4,7 +4,7 @@
         
         <div class="columns mb-4">
             <div class="column">
-                <camera ref="new_camera"></camera>
+                <camera ref="new_camera" @photoTaken="onPhotoTaken"></camera>
             </div>
             <div class="column">
                 sidebar
@@ -291,6 +291,11 @@ export default {
         // Webcam stuff
         async toggleCamera() {
             this.$refs.new_camera.toggleCamera();
+        },
+
+        // Webcam listeners
+        onPhotoTaken(photo) {
+            this.user_photo = photo;
         },
         /*************** 
         async toggleCamera() {
