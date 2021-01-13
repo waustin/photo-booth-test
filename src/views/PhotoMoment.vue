@@ -126,6 +126,7 @@ export default {
             cam: {
                 width: 1000,
                 height: 750,
+                error: null,
             },
 
             is_dragging: false,
@@ -280,10 +281,11 @@ export default {
         async openCamera() {
             console.log('open camera');
 
+            this.cam.error = null; // clear camera errors;
             this.is_camera_loading = true;
             const constraints =  {
                 audio: false,
-                video: true
+                video: { facingMode: "user" }, // front facing camera on phones
             };
 
             try{
@@ -294,13 +296,37 @@ export default {
             }
             catch(error){
                 this.isLoading = false;
-                alert("Error Opening Camera");
-                console.log("Create Camera Error");
-                console.log(error);
+                let err_msg = "Error Opening Camera: "
+                if(error.name == "NotFoundError" || error.name == "DevicesNotFoundError") {
+                    // required track is missing 
+                    err_msg += "No Camera Found";
+                } else if (error.name == "NotReadableError" || error.name == "TrackStartError") {
+                    // webcam or mic are already in use 
+                    err_msg += "Camera Already In-Use";
+                } else if (error.name == "OverconstrainedError" || error.name == "ConstraintNotSatisfiedError") {
+                    // constraints can not be satisfied by avb. devices 
+                    err_msg += "Camera unable to meet application requirement constraints";
+                } else if (error.name == "NotAllowedError" || error.name == "PermissionDeniedError") {
+                    // permission denied in browser 
+                    err_msg += "Permission Denined";
+                } else if (error.name == "TypeError" || error.name == "TypeError") {
+                    // empty constraints object 
+                    err_msg += "Empty Media Constraints";
+                } else {
+                    // other errors 
+                    err_msg += "Unspecified Error";
+                }
+                
+                console.log(err_msg);
+                console.log(error.message);
+
+                this.cam.error = err_msg;
+                alert(err_msg);
             }
         },
         async closeCamera() {
             console.log('close camera');
+            this.cam.error = null; // clear camera errors
             this.is_camera_loading = false;
             this.is_camera_open = false;
 
