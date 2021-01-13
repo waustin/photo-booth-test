@@ -8,7 +8,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/photo-moment',
+    path: '/',
     name: 'photo-moment',
     component: PhotoMoment
   },
@@ -22,15 +22,6 @@ const routes = [
     name: 'webcam-demo',
     component: WebcamDemo,
   },
-  /*{
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-   // component: () => import( '../views/About.vue')
-  }
-  */
 ]
 
 const router = new VueRouter({

@@ -21,8 +21,12 @@
                     <div class="ml-2">
                         <span class="sep">OR</span> 
                         <button 
-                            @click="openCamera"
-                            type="button" class="button">Open Camera</button>
+                            class="button"
+                            :class="{ 'is-primary' : !is_camera_open, 'is-danger' : is_camera_open}"
+                            @click="toggleCamera" type="button" >
+                            <span v-if="!is_camera_open">Open Camera</span>
+                            <span v-else>Close Camera</span>
+                        </button>
                     </div>
                 </div>
 
@@ -263,6 +267,16 @@ export default {
                 this.readUserFile(files[0]);
             }
         },
+        // Webcam stuff
+        async toggleCamera() {
+            if( this.is_camera_open ) {
+                // Close the camera
+                this.closeCamera();
+            } else {
+                // Open the camera
+                this.openCamera();
+            }
+        },
         async openCamera() {
             console.log('open camera');
 
@@ -284,6 +298,16 @@ export default {
                 console.log("Create Camera Error");
                 console.log(error);
             }
+        },
+        async closeCamera() {
+            console.log('close camera');
+            this.is_camera_loading = false;
+            this.is_camera_open = false;
+
+            let tracks = this.$refs.camera.srcObject.getTracks();
+			tracks.forEach(track => {
+				track.stop();
+			});
         },
         takePhoto() {
             console.log('take photo');
