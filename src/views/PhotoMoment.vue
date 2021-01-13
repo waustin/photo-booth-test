@@ -1,6 +1,16 @@
 <template>
     <div class="photo-moment">
         <h1 class="mb-2">Photo Moment Test</h1>
+        
+        <div class="columns mb-4">
+            <div class="column">
+                <camera ref="new_camera"></camera>
+            </div>
+            <div class="column">
+                sidebar
+            </div>
+        </div>
+
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
@@ -30,6 +40,7 @@
                     </div>
                 </div>
 
+<!--
                 <div class="camera-wrapper" v-show="is_camera_open">
 
                     <div class="camera-image-wrapper">
@@ -55,7 +66,7 @@
                         <span class="icon"><i class="fas fa-camera"></i></span>    
                     </button>
                 </div>
-
+-->
                 <div class="photo-stage-wrapper" v-show="showPhotoStage">
 
                     <div class="photo-bg stage mb-4" ref="stage" id="stage"
@@ -117,8 +128,14 @@
 <script>
 // TODO: figure out how to distinguish image drops vs prop drops
 // How to clear out the prop being dragged
+
+import Camera from '../components/Camera.vue';
+
 export default {
     name: "PhotoMoment",
+    components: {
+        Camera,
+    },
     data: function() {
         return {
             is_camera_loading: false,
@@ -273,6 +290,10 @@ export default {
         },
         // Webcam stuff
         async toggleCamera() {
+            this.$refs.new_camera.toggleCamera();
+        },
+        /*************** 
+        async toggleCamera() {
             if( this.is_camera_open ) {
                 // Close the camera
                 this.closeCamera();
@@ -349,6 +370,7 @@ export default {
 
             this.closeCamera();
         }
+        ******/
     },
     computed: {
         showPhotoStage() {
