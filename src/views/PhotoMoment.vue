@@ -31,18 +31,21 @@
                 </div>
 
                 <div class="camera-wrapper" v-show="is_camera_open">
-                    <video 
-                        class="camera"
-                        ref="camera" autoplay
-                        :width="cam.width" :height="cam.height">
-                    </video>
 
-                    <canvas 
-                        v-show="show_canvas"
-                        class="photo-taken-canvas"
-                        id="photoTaken"
-                        ref="canvas" :width="cam.width" :height="cam.height">
-                    </canvas>
+                    <div class="camera-image-wrapper">
+                        <video 
+                            class="camera"
+                            ref="camera" autoplay
+                            :width="cam.width" :height="cam.height">
+                        </video>
+
+                        <canvas 
+                            v-show="show_canvas"
+                            class="photo-taken-canvas"
+                            id="photoTaken"
+                            ref="canvas" :width="cam.width" :height="cam.height">
+                        </canvas>
+                    </div>
 
                     <button 
                         v-if="canTakePhoto"
@@ -120,7 +123,6 @@ export default {
         return {
             is_camera_loading: false,
             is_camera_open: false,
-            is_camera_taking_photo: false,
             has_camera_taken_photo: false,
             show_canvas: false,
 
@@ -285,7 +287,6 @@ export default {
             this.cam.error = null; // clear camera errors;
             
             this.is_camera_loading = true;
-            this.is_camera_taking_photo = false;
 
             const constraints =  {
                 audio: false,
@@ -331,7 +332,6 @@ export default {
         async closeCamera() {
             console.log('close camera');
             this.cam.error = null; // clear camera errors
-            this.is_camera_taking_photo = false;
             this.is_camera_loading = false;
             this.is_camera_open = false;
 
@@ -342,20 +342,12 @@ export default {
         },
         takePhoto() {
             console.log('take photo');
-
-            // Set a temp flag when the camera is taking a photo
-            // we can do a flash effect
-            this.is_camera_taking_photo = true;
-            const FLASH_TIMEOUT = 50;
-            setTimeout(() => {
-                this.is_camera_taking_photo = false;
-            }, FLASH_TIMEOUT);
             
-           const context = this.$refs.canvas.getContext('2d');
-           context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
-           this.user_photo = this.$refs.canvas.toDataURL();
+            const context = this.$refs.canvas.getContext('2d');
+            context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
+            this.user_photo = this.$refs.canvas.toDataURL();
 
-           this.is_camera_open = false;
+            this.closeCamera();
         }
     },
     computed: {
@@ -377,33 +369,14 @@ export default {
         border: 2px solid #666;
         background-color: #CCC;
         overflow: hidden;
-        /*
-        width: 100%;
-        min-height: 400px;
-        height: 600px;
-        display: block;
-        border: 2px solid #666;
-        background-color: #CCC;
-        overflow: hidden;
-        padding: 4px;
-        display: flex;
-        position: relative;
-        justify-content: center;
-        align-items: center;
-        */
+    
         img {
             max-width: 100%;
-           // position: absolute;
             display: block;
             width: 100%;
             height: auto;
         }
-        /*
-        img.bg-image {
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }*/
+        
         img.prop-stage-image {
             position: absolute;
             height: auto;
@@ -504,10 +477,17 @@ export default {
         justify-content: flex-start;
         align-items: center;
     }
-    .camera {
-        margin-bottom: 2rem;
-        border: 2px solid #666;
-        padding: 2px;
+    .camera-image-wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        margin-bottom: 1rem;
+        border: 1px solid #666;
         background-color: #222;
+   
+        .camera {
+            display: block;
+        }
     }
 </style>
