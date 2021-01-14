@@ -102,7 +102,7 @@ export default {
                 console.log(error.message);
 
                 this.cam.error = err_msg;
-                this.$emit('cameraOpenError', err_msg);
+                this.$emit('cameraError', err_msg);
                 alert(err_msg);
             }
         },
@@ -117,7 +117,7 @@ export default {
 				track.stop();
             });
             
-            this.$emit('cameraClosed');
+            this.$emit('cameraClose');
         },
         takePhoto() {
             console.log('take photo');

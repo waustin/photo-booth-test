@@ -2,19 +2,11 @@
     <div class="photo-moment">
         <h1 class="mb-2">Photo Moment Test</h1>
         
-        <div class="columns mb-4">
-            <div class="column">
-                <camera ref="new_camera" @photoTaken="onPhotoTaken"></camera>
-            </div>
-            <div class="column">
-                sidebar
-            </div>
-        </div>
 
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
-                    <div class="mr-2">Drag a Photo <span class="sep"> OR </span></div>
+                    
                     <div class="file">
                         <label class="file-label">
                             <input class="file-input" type="file" @change="pickPhoto">
@@ -40,47 +32,24 @@
                     </div>
                 </div>
 
-<!--
-                <div class="camera-wrapper" v-show="is_camera_open">
+                <camera ref="new_camera" 
+                    @photoTaken="onPhotoTaken"
+                    @cameraOpen="onCameraOpen"
+                    @cameraClose="onCameraClose"
+                    @cameraError="onCameraError">
+                </camera>
 
-                    <div class="camera-image-wrapper">
-                        <video 
-                            class="camera"
-                            ref="camera" autoplay
-                            :width="cam.width" :height="cam.height">
-                        </video>
-
-                        <canvas 
-                            v-show="show_canvas"
-                            class="photo-taken-canvas"
-                            id="photoTaken"
-                            ref="canvas" :width="cam.width" :height="cam.height">
-                        </canvas>
-                    </div>
-
-                    <button 
-                        v-if="canTakePhoto"
-                        class="button is-rounded is-info"
-                        type="button"
-                        @click="takePhoto">
-                        <span class="icon"><i class="fas fa-camera"></i></span>    
-                    </button>
-                </div>
--->
                 <div class="photo-stage-wrapper" v-show="showPhotoStage">
-
                     <div class="photo-bg stage mb-4" ref="stage" id="stage"
                         @dragover.stop.prevent="dragOverStage"
                         @dragleave.stop.prevent="dragLeaveStage"
                         @drop.stop.prevent="dropStage($event)">
 
                         <img class="bg-image" v-if="user_photo" :src="user_photo" />
+                        <div v-else class="instructions">
+                            <h1>You can drop a photo here</h1>
+                        </div>
 
-<!--
-                        <h1 v-if="!user_photo && !is_dragging">Drop An Image From Your Computer</h1>
-                        <h1 v-if="!user_photo && is_dragging">Drop Image Here</h1>
-                        <h1 v-if="invalid_image_format">Invalid file type. That was not an Image.</h1>
-                    -->
                         <!-- on stage images -->
                         <img class="prop-stage-image"
                             v-for="(prop, idx) in props_on_stage"
@@ -138,22 +107,17 @@ export default {
     },
     data: function() {
         return {
-            is_camera_loading: false,
             is_camera_open: false,
-            has_camera_taken_photo: false,
-            show_canvas: false,
+            errors: null,
 
-            cam: {
-                width: 1000,
-                height: 750,
-                error: null,
-            },
+            user_photo: null,
+            out_image: null,
 
             is_dragging: false,
             is_prop_add_dragging: false,
             is_prop_move_dragging: false,
             invalid_image_format: false,
-            user_photo: null,
+            
             prop_images: [
                 './images/prop-1.png', './images/prop-2.png', 
                 './images/prop-3.png', './images/prop-4.png'
@@ -162,7 +126,7 @@ export default {
             props_on_stage: [
                 // should be an array of dictionaries. { image_src/id, xpos, ypos, zindex?}
             ],
-            out_image: null,
+            
         }
     },
     methods: {
@@ -279,6 +243,7 @@ export default {
         },
 
 
+        // Upload Photo from Device
         pickPhoto(event) {
             // pick a local photo to add to stage
             console.log('Pick Photo');
@@ -288,101 +253,28 @@ export default {
                 this.readUserFile(files[0]);
             }
         },
-        // Webcam stuff
+
+        // Webcam Methods and Events
         async toggleCamera() {
             this.$refs.new_camera.toggleCamera();
         },
-
-        // Webcam listeners
         onPhotoTaken(photo) {
             this.user_photo = photo;
         },
-        /*************** 
-        async toggleCamera() {
-            if( this.is_camera_open ) {
-                // Close the camera
-                this.closeCamera();
-            } else {
-                // Open the camera
-                this.openCamera();
-            }
+        onCameraOpen() {
+            this.is_camera_open = true;
         },
-        async openCamera() {
-            console.log('open camera');
-
-            this.cam.error = null; // clear camera errors;
-            
-            this.is_camera_loading = true;
-
-            const constraints =  {
-                audio: false,
-                video: { facingMode: "user" }, // front facing camera on phones
-            };
-
-            try {
-                let stream = await navigator.mediaDevices.getUserMedia(constraints);
-                this.is_camera_loading = false;
-                this.is_camera_open = true;
-                this.$refs.camera.srcObject = stream;
-            }
-            catch(error){
-                this.is_camera_loading = false;
-                let err_msg = "Error Opening Camera: "
-                if(error.name == "NotFoundError" || error.name == "DevicesNotFoundError") {
-                    // required track is missing 
-                    err_msg += "No Camera Found";
-                } else if (error.name == "NotReadableError" || error.name == "TrackStartError") {
-                    // webcam or mic are already in use 
-                    err_msg += "Camera Already In-Use";
-                } else if (error.name == "OverconstrainedError" || error.name == "ConstraintNotSatisfiedError") {
-                    // constraints can not be satisfied by avb. devices 
-                    err_msg += "Camera unable to meet application requirement constraints";
-                } else if (error.name == "NotAllowedError" || error.name == "PermissionDeniedError") {
-                    // permission denied in browser 
-                    err_msg += "Permission Denined";
-                } else if (error.name == "TypeError" || error.name == "TypeError") {
-                    // empty constraints object 
-                    err_msg += "Empty Media Constraints";
-                } else {
-                    // other errors 
-                    err_msg += "Unspecified Error";
-                }
-                
-                console.log(err_msg);
-                console.log(error.message);
-
-                this.cam.error = err_msg;
-                alert(err_msg);
-            }
-        },
-        async closeCamera() {
-            console.log('close camera');
-            this.cam.error = null; // clear camera errors
-            this.is_camera_loading = false;
+        onCameraClose() {
             this.is_camera_open = false;
-
-            let tracks = this.$refs.camera.srcObject.getTracks();
-			tracks.forEach(track => {
-				track.stop();
-			});
         },
-        takePhoto() {
-            console.log('take photo');
-            
-            const context = this.$refs.canvas.getContext('2d');
-            context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
-            this.user_photo = this.$refs.canvas.toDataURL();
-
-            this.closeCamera();
+        onCameraError(err_msg) {
+            this.errors = err_msg;
         }
-        ******/
+       
     },
     computed: {
         showPhotoStage() {
-            return !this.is_camera_open;
-        },
-        canTakePhoto() {
-            return this.is_camera_open;
+            return !this.is_camera_open
         }
     }
 }
@@ -396,6 +288,11 @@ export default {
         border: 2px solid #666;
         background-color: #CCC;
         overflow: hidden;
+
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: center;
     
         img {
             max-width: 100%;
@@ -416,6 +313,9 @@ export default {
             &:active {
                 cursor: grabbing;
             }
+        }
+        .instructions {
+           
         }
     }
     .sidebar {
