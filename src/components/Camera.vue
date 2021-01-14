@@ -6,13 +6,6 @@
                 ref="camera" autoplay
                 :width="width" :height="height">
             </video>
-
-            <canvas 
-                v-show="show_canvas"
-                class="photo-taken-canvas"
-                id="photoTaken"
-                ref="canvas" :width="width" :height="height">
-            </canvas>
         </div>
 
         <button 
@@ -42,15 +35,25 @@ export default {
         return {
             is_camera_loading: false,
             is_camera_open: false,
-            has_camera_taken_photo: false,
-            show_canvas: false,
-
+    
             error: null,
 
             photo: null,
+            camCanvas: null,
+        }
+    },
+    created() {
+        // Create an off screen canvas element for capturing our photo
+        if(this.camCanvas == null) {
+            this.createCamCanvas();
         }
     },
     methods: {
+        createCamCanvas() {
+            this.camCanvas = document.createElement('canvas');
+            this.camCanvas.width = this.width;
+            this.camCanvas.height = this.height;
+        },
         // Webcam stuff
         async toggleCamera() {
             if( this.is_camera_open ) {
@@ -127,11 +130,11 @@ export default {
         },
         takePhoto() {
             console.log('take photo');
-            
-            const context = this.$refs.canvas.getContext('2d');
+           
+            const context = this.camCanvas.getContext('2d');
             console.log(this.width, this.height);
             context.drawImage(this.$refs.camera, 0, 0, this.width, this.height);
-            this.photo = this.$refs.canvas.toDataURL();
+            this.photo = this.camCanvas.toDataURL();
             this.closeCamera();
             this.$emit('photoTaken', this.photo);
         }
