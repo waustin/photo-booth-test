@@ -102,7 +102,7 @@ export default {
                 console.log(error.message);
 
                 this.cam.error = err_msg;
-                this.$emit('cameraOpenError');
+                this.$emit('cameraOpenError', err_msg);
                 alert(err_msg);
             }
         },
