@@ -33,6 +33,8 @@
                 </div>
 
                 <camera ref="new_camera" 
+                    :width="out_image_props.width"
+                    :height="out_image_props.height"
                     @photoTaken="onPhotoTaken"
                     @cameraOpen="onCameraOpen"
                     @cameraClose="onCameraClose"
@@ -112,6 +114,13 @@ export default {
 
             user_photo: null,
             out_image: null,
+
+            out_image_props: {
+                // Insta dimensions 1080 x 1350  
+                // OG dimensions 1000 x 750 (75% aspect ratio)
+                width: 1080,
+                height: 1350,
+            },
 
             is_dragging: false,
             is_prop_add_dragging: false,

@@ -17,6 +17,7 @@
     "core-js": "^3.6.5",
     "save": "^2.4.0",
     "vue": "^2.6.11",
+    "vue-cropperjs": "^4.2.0",
     "vue-html2canvas": "0.0.4",
     "vue-router": "^3.4.9"
   },

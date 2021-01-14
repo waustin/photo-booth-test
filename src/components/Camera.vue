@@ -3,8 +3,7 @@
         <div class="camera-image-wrapper">
             <video 
                 class="camera"
-                ref="camera" autoplay
-                :width="width" :height="height">
+                ref="camera" autoplay>
             </video>
         </div>
 
@@ -73,7 +72,15 @@ export default {
 
             const constraints =  {
                 audio: false,
-                video: { facingMode: "user" }, // front facing camera on phones
+                video: { 
+                    facingMode: "user", // front facing camera on phones
+                    width: {
+                        ideal: 1280
+                    },
+                    height: {
+                        ideal: 720
+                    },
+                }, 
             };
 
             try {
@@ -132,11 +139,19 @@ export default {
             console.log('take photo');
            
             const context = this.camCanvas.getContext('2d');
-            console.log(this.width, this.height);
-            context.drawImage(this.$refs.camera, 0, 0, this.width, this.height);
+           
+            const videoWidth = this.$refs.camera.videoWidth;
+            const videoHeight = this.$refs.camera.videoHeight;
+
+            console.log(videoWidth, videoHeight);
+
+            return false;
+            /*
+            context.drawImage(this.$refs.camera, 0, 0);//, this.width, this.height);
             this.photo = this.camCanvas.toDataURL();
             this.closeCamera();
             this.$emit('photoTaken', this.photo);
+            */
         }
     },
     computed: {
