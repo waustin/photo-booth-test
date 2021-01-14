@@ -4,14 +4,14 @@
             <video 
                 class="camera"
                 ref="camera" autoplay
-                :width="cam.width" :height="cam.height">
+                :width="width" :height="height">
             </video>
 
             <canvas 
                 v-show="show_canvas"
                 class="photo-taken-canvas"
                 id="photoTaken"
-                ref="canvas" :width="cam.width" :height="cam.height">
+                ref="canvas" :width="width" :height="height">
             </canvas>
         </div>
 
@@ -28,6 +28,16 @@
 <script>
 export default {
     name: "Camera",
+    props: {
+        width: {
+            type: Number,
+            default: 1000,
+        },
+        height: {
+            type: Number,
+            default: 750,
+        },
+    },
     data: function() {
         return {
             is_camera_loading: false,
@@ -37,10 +47,6 @@ export default {
 
             error: null,
 
-            cam: {
-                width: 1000,
-                height: 750,
-            },
             photo: null,
         }
     },
@@ -58,7 +64,7 @@ export default {
         async openCamera() {
             console.log('open camera');
 
-            this.cam.error = null; // clear camera errors;
+            this.error = null; // clear camera errors;
             
             this.is_camera_loading = true;
 
@@ -101,14 +107,14 @@ export default {
                 console.log(err_msg);
                 console.log(error.message);
 
-                this.cam.error = err_msg;
+                this.error = err_msg;
                 this.$emit('cameraError', err_msg);
                 alert(err_msg);
             }
         },
         async closeCamera() {
             console.log('close camera');
-            this.cam.error = null; // clear camera errors
+            this.error = null; // clear camera errors
             this.is_camera_loading = false;
             this.is_camera_open = false;
 
@@ -123,7 +129,8 @@ export default {
             console.log('take photo');
             
             const context = this.$refs.canvas.getContext('2d');
-            context.drawImage(this.$refs.camera, 0, 0, this.cam.width, this.cam.height);
+            console.log(this.width, this.height);
+            context.drawImage(this.$refs.camera, 0, 0, this.width, this.height);
             this.photo = this.$refs.canvas.toDataURL();
             this.closeCamera();
             this.$emit('photoTaken', this.photo);
