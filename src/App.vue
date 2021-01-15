@@ -3,7 +3,8 @@
     <div id="nav">
       <router-link to="/photo-moment">Photo Moment</router-link> |
       <router-link :to="{ name: 'webcam-demo' }">Webcam Demo</router-link> | 
-      <router-link to="/background-remove">Background Test</router-link>
+      <router-link to="/background-remove">Background Test</router-link> | 
+      <router-link :to="{ name: 'crop-test' }">Crop Test</router-link>
 
     </div>
     <section class="section">

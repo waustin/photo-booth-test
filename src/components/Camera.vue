@@ -145,13 +145,13 @@ export default {
 
             console.log(videoWidth, videoHeight);
 
-            return false;
-            /*
+            //return false;
+            
             context.drawImage(this.$refs.camera, 0, 0);//, this.width, this.height);
             this.photo = this.camCanvas.toDataURL();
             this.closeCamera();
             this.$emit('photoTaken', this.photo);
-            */
+            
         }
     },
     computed: {
