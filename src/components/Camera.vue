@@ -21,14 +21,6 @@
 export default {
     name: "Camera",
     props: {
-        width: {
-            type: Number,
-            default: 1000,
-        },
-        height: {
-            type: Number,
-            default: 750,
-        },
     },
     data: function() {
         return {
@@ -50,8 +42,6 @@ export default {
     methods: {
         createCamCanvas() {
             this.camCanvas = document.createElement('canvas');
-            this.camCanvas.width = this.width;
-            this.camCanvas.height = this.height;
         },
         // Webcam stuff
         async toggleCamera() {
@@ -137,11 +127,15 @@ export default {
         },
         takePhoto() {
             console.log('take photo');
-           
-            const context = this.camCanvas.getContext('2d');
-           
+            
             const videoWidth = this.$refs.camera.videoWidth;
             const videoHeight = this.$refs.camera.videoHeight;
+            this.camCanvas.width = videoWidth
+            this.camCanvas.height = videoHeight;
+
+            const context = this.camCanvas.getContext('2d');
+           
+            
 
             console.log(videoWidth, videoHeight);
 

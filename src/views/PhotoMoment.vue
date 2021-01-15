@@ -33,8 +33,6 @@
                 </div>
 
                 <camera ref="new_camera" 
-                    :width="out_image_props.width"
-                    :height="out_image_props.height"
                     @photoTaken="onPhotoTaken"
                     @cameraOpen="onCameraOpen"
                     @cameraClose="onCameraClose"
@@ -47,7 +45,7 @@
                         @dragleave.stop.prevent="dragLeaveStage"
                         @drop.stop.prevent="dropStage($event)">
 
-                        <img class="bg-image" v-if="user_photo" :src="user_photo" />
+                        <img class="bg-image" v-if="userImage" :src="userImage" />
                         <div v-else class="instructions">
                             <h1>You can drop a photo here</h1>
                         </div>
@@ -86,10 +84,10 @@
                         @click="saveImage">Save</button>
 
                 <hr>
-                <div v-if="out_image" class="out-image-wrapper mt-2">
-                    <img :src="out_image" class="mb-3"/>
+                <div v-if="outImage" class="out-image-wrapper mt-2">
+                    <img :src="outImage" class="mb-3"/>
                     <a download="your-image.png" 
-                        :href="out_image" class="button is-success">Download Image</a>
+                        :href="outImage" class="button is-success">Download Image</a>
                 </div>
             </div>
         </div>
@@ -101,31 +99,37 @@
 // How to clear out the prop being dragged
 
 import Camera from '../components/Camera.vue';
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
 
 export default {
     name: "PhotoMoment",
     components: {
         Camera,
+        VueCropper,
     },
     data: function() {
         return {
+            app_state: 'INIT',
+
             is_camera_open: false,
             errors: null,
 
-            user_photo: null,
-            out_image: null,
+            userImage: null,
+            croppedImage: null,
+            outImage: null,
 
-            out_image_props: {
-                // Insta dimensions 1080 x 1350  
-                // OG dimensions 1000 x 750 (75% aspect ratio)
-                width: 1080,
-                height: 1350,
-            },
+            cropWidth: 1080, // Insta dimensions 1080 x 1350
+            cropHeight: 1350,
 
             is_dragging: false,
             is_prop_add_dragging: false,
             is_prop_move_dragging: false,
             invalid_image_format: false,
+
+
+
+            // Prop Stuff
             
             prop_images: [
                 './images/prop-1.png', './images/prop-2.png', 
@@ -144,7 +148,7 @@ export default {
                 this.invalid_image_format = false;
                 let reader = new FileReader();
                 reader.onload = (f) => {
-                    this.user_photo = f.target.result;
+                    this.userImage = f.target.result;
                     console.log('File Loaded');
                 }
                 reader.readAsDataURL(file);
@@ -248,7 +252,7 @@ export default {
                 windowWidth: 1600,
                 //windowHeight: 600,
             };
-            this.out_image = await this.$html2canvas(stageEl, options);
+            this.outImage = await this.$html2canvas(stageEl, options);
         },
 
 
@@ -268,7 +272,7 @@ export default {
             this.$refs.new_camera.toggleCamera();
         },
         onPhotoTaken(photo) {
-            this.user_photo = photo;
+            this.userImage = photo;
         },
         onCameraOpen() {
             this.is_camera_open = true;
@@ -278,12 +282,26 @@ export default {
         },
         onCameraError(err_msg) {
             this.errors = err_msg;
-        }
+        },
+
+        // Image Cropping
+        onCropClick() {
+            console.log('on crop click');
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas({
+                width: this.cropWidth, height: this.cropHeight
+            }).toDataURL();
+        }, 
        
     },
     computed: {
         showPhotoStage() {
             return !this.is_camera_open
+        },
+        cropAspectRatio() {
+            return this.cropWidth / this.cropHeight;
+        }, 
+        canCropPhoto() {
+            return this.userImage && !this.croppedImage
         }
     }
 }
