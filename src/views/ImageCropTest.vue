@@ -49,16 +49,24 @@ export default {
     data: function() {
         return {
             publicPath: process.env.BASE_URL,
-            cropAspectRatio: 1080/1350, // Insta dimensions 1080 x 1350
+            cropWidth: 1080, // Insta dimensions 1080 x 1350
+            cropHeight: 1350,
+            
             croppedImage: null,
         }
     },
     methods: {
         onCropClick() {
             console.log('on crop click');
-            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL();
-        },
-        
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas({
+                width: this.cropWidth, height: this.cropHeight
+            }).toDataURL();
+        },   
+    },
+    computed: {
+        cropAspectRatio() {
+            return this.cropWidth / this.cropHeight;
+        }, 
     }
 }
 </script>
