@@ -1,8 +1,10 @@
 <template>
     <div class="photo-moment">
         <h1 class="mb-2">Photo Moment Test</h1>
-        
-
+        <section class="section">
+            <button type="button" @click="show_camera_modal=true"
+                    class="button is-info">Show Camera Modal</button>
+        </section>
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
@@ -91,6 +93,10 @@
                 </div>
             </div>
         </div>
+
+        <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
+            <h1>This is my modal</h1>
+        </modal>
     </div>
 </template>
 
@@ -99,6 +105,7 @@
 // How to clear out the prop being dragged
 
 import Camera from '../components/Camera.vue';
+import Modal from '../components/Modal.vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 
@@ -106,6 +113,7 @@ export default {
     name: "PhotoMoment",
     components: {
         Camera,
+        Modal,
         VueCropper,
     },
     data: function() {
@@ -128,6 +136,8 @@ export default {
             invalid_image_format: false,
 
 
+            // show camera modal,
+            show_camera_modal: false,
 
             // Prop Stuff
             

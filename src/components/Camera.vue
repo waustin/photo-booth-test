@@ -134,13 +134,7 @@ export default {
             this.camCanvas.height = videoHeight;
 
             const context = this.camCanvas.getContext('2d');
-           
-            
 
-            console.log(videoWidth, videoHeight);
-
-            //return false;
-            
             context.drawImage(this.$refs.camera, 0, 0);//, this.width, this.height);
             this.photo = this.camCanvas.toDataURL();
             this.closeCamera();
