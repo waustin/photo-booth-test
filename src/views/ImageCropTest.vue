@@ -3,26 +3,36 @@
       <h1 class="title">Crop Test</h1>
 
       <section>
-        <div class="column">
-            <!--
-            <img id="image" :src="`${publicPath}images/person.jpg`" />
-            <hr/>
-            -->
-            <vue-cropper
-                ref="cropper"
-                :src="`${publicPath}images/person.jpg`"
-                :guides="true"
-                :aspectRatio="cropAspectRatio"
-                :view-mode="2"
-                drag-mode="crop"
-                :auto-crop-area="0.5"
-                min-container-width="250"
-                :min-container-height="180"
-                :background="true"
-                :rotatable="true"
-                alt="Source Image">
-            </vue-cropper>
-        </div>
+          <div class="columns">
+            <div class="column">
+            
+                <vue-cropper
+                    class="mb-2"
+                    ref="cropper"
+                    :src="`${publicPath}images/person.jpg`"
+                    :guides=true
+                    :aspectRatio="cropAspectRatio"
+                    :background=true 
+                    :responsive=true
+                    :movable=true
+                    :rotatable=false
+                    :view-mode=2
+                    drag-mode="crop"
+                    :auto-crop-area=0.5
+                    :min-container-width=250
+                    :min-container-height=300>
+                </vue-cropper>
+
+                <button type="button" @click.prevent="onCropClick"
+                    class="button">Crop</button>
+            </div>
+            <div class="column">
+                    <h2>Output</h2>
+                    <div v-if="croppedImage" class="cropped-img-wrapper">
+                        <img class="cropped-img" :src="croppedImage" />
+                    </div>
+            </div>
+          </div>
       </section>
   </div>
 </template>
@@ -40,7 +50,15 @@ export default {
         return {
             publicPath: process.env.BASE_URL,
             cropAspectRatio: 1080/1350, // Insta dimensions 1080 x 1350
+            croppedImage: null,
         }
+    },
+    methods: {
+        onCropClick() {
+            console.log('on crop click');
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL();
+        },
+        
     }
 }
 </script>
