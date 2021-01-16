@@ -1,9 +1,9 @@
 <template>
-  <div class="modal" v-show="show">
+  <div class="modal"
+       :class="{ 'is-active': show }">
     <div class="modal-background"></div>
     <div class="modal-content">
-        <h1>In the modal</h1>
-       <slot></slot>
+        <slot></slot>
     </div>
     <button class="modal-close is-large" aria-label="close"
             @class="$emit('close')"></button>

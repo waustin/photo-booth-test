@@ -93,10 +93,11 @@
                 </div>
             </div>
         </div>
-
+       
         <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
-            <h1>This is my modal</h1>
+            <div class="box"><h1>This is my modal</h1></div>
         </modal>
+       
     </div>
 </template>
 
