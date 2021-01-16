@@ -2,8 +2,18 @@
     <div class="photo-moment">
         <h1 class="mb-2">Photo Moment Test</h1>
         <section class="section">
-            <button type="button" @click="show_camera_modal=true"
-                    class="button is-info">Show Camera Modal</button>
+            <button type="button" @click="toggleCamera"
+                    class="button is-info">Open Camera</button>
+
+                    <!--
+
+                        @click="show_camera_modal=true"
+class="button"
+                            :class="{ 'is-primary' : !is_camera_open, 'is-danger' : is_camera_open}"
+                            @click="toggleCamera" type="button" >
+                            <span v-if="!is_camera_open">Open Camera</span>
+                            <span v-else>Close Camera</span>
+                        -->
         </section>
         <div class="columns">
             <div class="column">
@@ -22,24 +32,9 @@
                             </span>
                         </label>
                     </div>
-                    <div class="ml-2">
-                        <span class="sep">OR</span> 
-                        <button 
-                            class="button"
-                            :class="{ 'is-primary' : !is_camera_open, 'is-danger' : is_camera_open}"
-                            @click="toggleCamera" type="button" >
-                            <span v-if="!is_camera_open">Open Camera</span>
-                            <span v-else>Close Camera</span>
-                        </button>
-                    </div>
                 </div>
 
-                <camera ref="new_camera" 
-                    @photoTaken="onPhotoTaken"
-                    @cameraOpen="onCameraOpen"
-                    @cameraClose="onCameraClose"
-                    @cameraError="onCameraError">
-                </camera>
+               
 
                 <div class="photo-stage-wrapper" v-show="showPhotoStage">
                     <div class="photo-bg stage mb-4" ref="stage" id="stage"
@@ -95,7 +90,14 @@
         </div>
        
         <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
-            <div class="box"><h1>This is my modal</h1></div>
+            <div class="box">
+                 <camera ref="new_camera" 
+                    @photoTaken="onPhotoTaken"
+                    @cameraOpen="onCameraOpen"
+                    @cameraClose="onCameraClose"
+                    @cameraError="onCameraError">
+                </camera>
+            </div>
         </modal>
        
     </div>
@@ -287,9 +289,11 @@ export default {
         },
         onCameraOpen() {
             this.is_camera_open = true;
+            this.show_camera_modal = true;
         },
         onCameraClose() {
             this.is_camera_open = false;
+            this.show_camera_modal = false;
         },
         onCameraError(err_msg) {
             this.errors = err_msg;
