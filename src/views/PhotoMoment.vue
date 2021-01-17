@@ -31,33 +31,6 @@
 
                         <img class="bg-image" v-if="userImage && !needsCrop" :src="userImage" />
 
-                        <div class="crop-wrapper" 
-                             v-if="userImage && needsCrop" key="cropWrapper">
-
-                                <vue-cropper
-                                    class="bg-image bg-image-cropping"
-                                    ref="cropper"
-                                    :src="userImage"
-                                    :guides=true
-                                    :aspectRatio="cropAspectRatio"
-                                    :background=true 
-                                    :responsive=true
-                                    :movable=true
-                                    :rotatable=false
-                                    :view-mode=2
-                                    drag-mode="crop"
-                                    :auto-crop-area=0.5
-                                    :min-container-width=250
-                                    :min-container-height=300
-                                    :min-canvas-height=400
-                                    :min-crop-box-height=100>
-                                </vue-cropper>
-
-                                <button type="button" @click.prevent="onCropClick"
-                                    class="button">Crop</button>
-                        </div>
-
-
                         <div v-if="!userImage" class="instructions">
                             <h1>You can drop a photo here</h1>
                         </div>
@@ -106,12 +79,8 @@
        
         <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
             <div class="box">
-                 <camera ref="new_camera" 
-                    @photoTaken="onPhotoTaken"
-                    @cameraOpen="onCameraOpen"
-                    @cameraClose="onCameraClose"
-                    @cameraError="onCameraError">
-                </camera>
+                 
+
             </div>
         </modal>
        
@@ -317,16 +286,7 @@ export default {
             this.errors = err_msg;
         },
 
-        // Image Cropping
-        onCropClick() {
-            console.log('on crop click');
-            this.croppedImage = this.$refs.cropper.getCroppedCanvas({
-                width: this.cropWidth, height: this.cropHeight
-            }).toDataURL();
-
-            this.userImage = this.croppedImage;
-            this.needsCrop = false;
-        }, 
+        
        
     },
     computed: {
