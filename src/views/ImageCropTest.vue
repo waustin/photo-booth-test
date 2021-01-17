@@ -20,9 +20,12 @@
                     drag-mode="crop"
                     :auto-crop-area=0.5
                     :min-container-width=250
-                    :min-container-height=300>
+                    :min-crop-box-height=100
+                    @ready="cropperReady">
                 </vue-cropper>
-
+<!--
+:min-container-height=400
+    -->
                 <button type="button" @click.prevent="onCropClick"
                     class="button">Crop</button>
             </div>
@@ -62,6 +65,10 @@ export default {
                 width: this.cropWidth, height: this.cropHeight
             }).toDataURL();
         },   
+        cropperReady() {
+            console.log('cropper ready')
+            //this.$refs.cropper.setCropBoxData(200, 300);
+        }
     },
     computed: {
         cropAspectRatio() {

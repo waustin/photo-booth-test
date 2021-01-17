@@ -1,14 +1,11 @@
 <template>
     <div class="photo-moment">
         <h1 class="mb-2">Photo Moment Test</h1>
-        <section class="section">
-            <button type="button" @click="openCamera"
-                    class="button is-info">Open Camera</button>
-        </section>
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
-                    
+                    <button type="button" @click="openCamera"
+                        class="button is-info mr-4">Open Camera</button>
                     <div class="file">
                         <label class="file-label">
                             <input class="file-input" type="file" @change="pickPhoto">
@@ -35,7 +32,8 @@
                         <img class="bg-image" v-if="userImage && !needsCrop" :src="userImage" />
 
                         <div class="crop-wrapper" 
-                             v-show="userImage && needsCrop">
+                             v-if="userImage && needsCrop" key="cropWrapper">
+
                                 <vue-cropper
                                     class="bg-image bg-image-cropping"
                                     ref="cropper"
@@ -50,7 +48,9 @@
                                     drag-mode="crop"
                                     :auto-crop-area=0.5
                                     :min-container-width=250
-                                    :min-container-height=300>
+                                    :min-container-height=300
+                                    :min-canvas-height=400
+                                    :min-crop-box-height=100>
                                 </vue-cropper>
 
                                 <button type="button" @click.prevent="onCropClick"
@@ -323,6 +323,9 @@ export default {
             this.croppedImage = this.$refs.cropper.getCroppedCanvas({
                 width: this.cropWidth, height: this.cropHeight
             }).toDataURL();
+
+            this.userImage = this.croppedImage;
+            this.needsCrop = false;
         }, 
        
     },
