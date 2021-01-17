@@ -4,16 +4,6 @@
         <section class="section">
             <button type="button" @click="openCamera"
                     class="button is-info">Open Camera</button>
-
-                    <!--
-
-                        @click="show_camera_modal=true"
-class="button"
-                            :class="{ 'is-primary' : !is_camera_open, 'is-danger' : is_camera_open}"
-                            @click="toggleCamera" type="button" >
-                            <span v-if="!is_camera_open">Open Camera</span>
-                            <span v-else>Close Camera</span>
-                        -->
         </section>
         <div class="columns">
             <div class="column">
@@ -42,8 +32,33 @@ class="button"
                         @dragleave.stop.prevent="dragLeaveStage"
                         @drop.stop.prevent="dropStage($event)">
 
-                        <img class="bg-image" v-if="userImage" :src="userImage" />
-                        <div v-else class="instructions">
+                        <img class="bg-image" v-if="userImage && !needsCrop" :src="userImage" />
+
+                        <div class="crop-wrapper" 
+                             v-show="userImage && needsCrop">
+                                <vue-cropper
+                                    class="bg-image bg-image-cropping"
+                                    ref="cropper"
+                                    :src="userImage"
+                                    :guides=true
+                                    :aspectRatio="cropAspectRatio"
+                                    :background=true 
+                                    :responsive=true
+                                    :movable=true
+                                    :rotatable=false
+                                    :view-mode=2
+                                    drag-mode="crop"
+                                    :auto-crop-area=0.5
+                                    :min-container-width=250
+                                    :min-container-height=300>
+                                </vue-cropper>
+
+                                <button type="button" @click.prevent="onCropClick"
+                                    class="button">Crop</button>
+                        </div>
+
+
+                        <div v-if="!userImage" class="instructions">
                             <h1>You can drop a photo here</h1>
                         </div>
 
@@ -125,6 +140,8 @@ export default {
 
             is_camera_open: false,
             errors: null,
+
+            needsCrop: false,
 
             userImage: null,
             croppedImage: null,
@@ -286,6 +303,7 @@ export default {
         },
         onPhotoTaken(photo) {
             this.userImage = photo;
+            this.needsCrop = true;
         },
         onCameraOpen() {
             this.is_camera_open = true;
