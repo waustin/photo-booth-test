@@ -2,7 +2,7 @@
     <div class="photo-moment">
         <h1 class="mb-2">Photo Moment Test</h1>
         <section class="section">
-            <button type="button" @click="toggleCamera"
+            <button type="button" @click="openCamera"
                     class="button is-info">Open Camera</button>
 
                     <!--
@@ -281,8 +281,8 @@ export default {
         },
 
         // Webcam Methods and Events
-        async toggleCamera() {
-            this.$refs.new_camera.toggleCamera();
+        async openCamera() {
+            await this.$refs.new_camera.openCamera();
         },
         onPhotoTaken(photo) {
             this.userImage = photo;
