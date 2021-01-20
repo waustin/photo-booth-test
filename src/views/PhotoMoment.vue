@@ -4,7 +4,6 @@
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
-                    
                     <div class="field is-grouped">
                         <p class="control">
                             <button type="button" @click="openCamera"
@@ -88,7 +87,6 @@
        
         <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
             <div class="box">
-                 <p>In Modal</p>
                 <photo-grabber 
                     ref="camera"
                     :cropWidth="cropWidth"
