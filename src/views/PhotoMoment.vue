@@ -69,9 +69,10 @@
                 <div class="column is-two-fifths sidebar">
                     <h4>Pick an Overlay</h4>
                     <div class="overlay-list">
-                        <img v-for="(overlay, idx) in overaly_images" 
-                            :key="'prop-' + idx" :src="overlay" 
-                            @click="onOverlayClick($event, prop)"/>
+                        <img v-for="(overlay, idx) in overlay_images" 
+                            :key="'overlay-' + idx" :src="overlay" 
+                            class="overlay-img"
+                            @click="onOverlayClick($event, overlay)"/>
                     </div>
 
                     <!---
@@ -481,5 +482,22 @@ export default {
         margin-bottom: 2rem;
         padding: 2rem;
         border: 1px solid rgba(0, 0, 0, 0.4);
+        display: flex;
+        overflow: hidden;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
+        align-content: flex-start;
+        .overlay-img {
+            display: block;
+            border: 2px solid rgba(0,0,0,0.6);
+            margin-bottom: 1rem;
+            max-width: 150px;
+            &:hover {
+                transform: scale(1.05);
+                transition: transform 0.2s ease-out;
+                cursor: pointer;
+            }
+        }
     }
 </style>
