@@ -72,15 +72,24 @@ export default {
         }, 
     },
     created() {
+        console.log('Photo Grabber Created');
         this.is_camera_open = false;
         this.errors = null;
         this.cameraImage = null;
         this.croppedImage = null;
     },
     mounted() {
+        console.log('Photo Grabber Mounted');
         this.$refs.camera.openCamera();
     },
     methods: {
+        cameraInit() {
+            this.is_camera_open = false;
+            this.errors = null;
+            this.cameraImage = null;
+            this.croppedImage = null;
+            this.$refs.camera.openCamera();
+        },
         // Camera Events
         onPhotoTaken(photo) {
             this.cameraImage = photo;

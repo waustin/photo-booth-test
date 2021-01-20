@@ -1,13 +1,12 @@
 <template>
-  <div class="modal"
-       :class="{ 'is-active': show }">
-    <div class="modal-background"></div>
-    <div class="modal-content">
-        <slot></slot>
+    <div class="modal is-active" v-if="show">
+        <div class="modal-background"></div>
+            <div class="modal-content">
+                <slot></slot>
+            </div>
+            <button class="modal-close is-large" aria-label="close"
+                    @click="$emit('close')"></button>
     </div>
-    <button class="modal-close is-large" aria-label="close"
-            @click="$emit('close')"></button>
-</div>
 </template>
 
 <script>
