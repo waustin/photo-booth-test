@@ -67,6 +67,14 @@
 
                 </div>
                 <div class="column is-two-fifths sidebar">
+                    <h4>Pick an Overlay</h4>
+                    <div class="overlay-list">
+                        <img v-for="(overlay, idx) in overaly_images" 
+                            :key="'prop-' + idx" :src="overlay" 
+                            @click="onOverlayClick($event, prop)"/>
+                    </div>
+
+                    <!---
                     <h4>Drag A Prop onto the Stage</h4>
                     <div class="prop-list mb-2">
                         <img v-for="(prop, idx) in prop_images" 
@@ -75,7 +83,7 @@
                             @dragend="stopPropAddDrag($event, prop)"
                             draggable="true"/>
                     </div>
-                    
+                    -->
                     <button type="button" class="button is-primary"
                             @click="saveImage">Save</button>
 
@@ -142,7 +150,6 @@ export default {
             show_camera_modal: false,
 
             // Prop Stuff
-            
             prop_images: [
                 './images/prop-1.png', './images/prop-2.png', 
                 './images/prop-3.png', './images/prop-4.png'
@@ -152,6 +159,13 @@ export default {
                 // should be an array of dictionaries. { image_src/id, xpos, ypos, zindex?}
             ],
             
+            overlay_images: [
+                './images/overlays/beach.png',
+                './images/overlays/hills.png'
+            ],
+            overlays_on_stage: [
+                // put the overlays here when we stick them on stage
+            ]
         }
     },
     methods: {
@@ -186,6 +200,11 @@ export default {
         stopPropAddDrag(event, prop) {
             this.is_prop_add_dragging = false;
             this.prop_being_dragged = null;
+        },
+
+        // Overlay methods
+        onOverlayClick(event, overlay) {
+            console.log('onOverlayClick');
         },
 
         // Prop on Stage Drag Events
@@ -455,5 +474,12 @@ export default {
         .camera {
             display: block;
         }
+    }
+
+    // Overlay 
+    .overlay-list {
+        margin-bottom: 2rem;
+        padding: 2rem;
+        border: 1px solid rgba(0, 0, 0, 0.4);
     }
 </style>
