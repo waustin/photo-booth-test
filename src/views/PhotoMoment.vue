@@ -375,7 +375,7 @@ export default {
             left: 0;
             width: 100%;
             max-width: 100%;
-            z-index: 1000;
+            z-index: 100;
         }
         
         img.prop-stage-image {

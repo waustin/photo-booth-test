@@ -34,5 +34,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+    .modal {
+        z-index: 1000;
+    }
 </style>
