@@ -1,6 +1,6 @@
 <template>
     <div class="photo-grabber">
-        <camera ref="new_camera" 
+        <camera ref="camera" 
             @photoTaken="onPhotoTaken"
             @cameraOpen="onCameraOpen"
             @cameraClose="onCameraClose"
@@ -8,12 +8,12 @@
         </camera>
 
         <div class="crop-wrapper" 
-            v-if="userImage && needsCrop" key="cropWrapper">
+            v-if="cameraImage" key="cropWrapper">
 
             <vue-cropper
-                class="bg-image bg-image-cropping"
+                class="image-cropper"
                 ref="cropper"
-                :src="userImage"
+                :src="cameraImage"
                 :guides=true
                 :aspectRatio="cropAspectRatio"
                 :background=true 
@@ -28,17 +28,19 @@
                 :min-canvas-height=400
                 :min-crop-box-height=100>
             </vue-cropper>
-
+            
             <button type="button" @click.prevent="onCropClick"
-                class="button">Crop</button>
+                class="button is-primary">Crop</button>
         </div>
     </div>
 </template>
 
 <script>
 import Camera from '../components/Camera.vue';
+
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
+
 export default {
     // A tool to let a user grab a photo and crop it
     name: "PhotoGrabber",
@@ -60,8 +62,8 @@ export default {
         return {
             is_camera_open: false,
             errors: null,
-            camera_image: null,
-            cropped_image: null,
+            cameraImage: null,
+            croppedImage: null,
         }
     },
     computed: {
@@ -69,20 +71,28 @@ export default {
             return this.cropWidth / this.cropHeight;
         }, 
     },
+    created() {
+        this.is_camera_open = false;
+        this.errors = null;
+        this.cameraImage = null;
+        this.croppedImage = null;
+    },
+    mounted() {
+        this.$refs.camera.openCamera();
+    },
     methods: {
         // Camera Events
         onPhotoTaken(photo) {
-            this.camera_image = photo;
-            this.cropped_image = null;
+            this.cameraImage = photo;
+            this.croppedImage = null;
+            this.$emit('photoTaken', this.cameraImage);
         },
         onCameraOpen() {
             // the camera state events need to emit back
             this.is_camera_open = true;
-            this.show_camera_modal = true;
         },
         onCameraClose() {
             this.is_camera_open = false;
-            this.show_camera_modal = false;
         },
         onCameraError(err_msg) {
             this.errors = err_msg;
@@ -96,13 +106,16 @@ export default {
                 width: this.cropWidth, height: this.cropHeight
             }).toDataURL();
 
-            this.userImage = this.croppedImage;
             this.needsCrop = false;
+
+            this.$emit('photoCropped', this.croppedImage);
         }, 
     }
 }
 </script>
 
 <style scoped  lang="scss">
-
+    .image-cropper {
+        margin-bottom: 1rem;
+    }
 </style>

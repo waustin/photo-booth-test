@@ -4,20 +4,29 @@
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
-                    <button type="button" @click="openCamera"
-                        class="button is-info mr-4">Open Camera</button>
-                    <div class="file">
-                        <label class="file-label">
-                            <input class="file-input" type="file" @change="pickPhoto">
-                            <span class="file-cta">
-                            <span class="file-icon">
-                                <i class="fas fa-upload"></i>
-                            </span>
-                            <span class="file-label">
-                                Pick a Photo&hellip;
-                            </span>
-                            </span>
-                        </label>
+                    
+                    <div class="field is-grouped">
+                        <p class="control">
+                            <button type="button" @click="openCamera"
+                                class="button is-info">
+                                    Open Camera
+                            </button>
+                        </p>
+                        
+                        <div class="control file">
+                            <label class="file-label">
+                                <input class="file-input" type="file" @change="pickPhoto">
+                                <span class="file-cta">
+                                    <span class="file-icon">
+                                        <i class="fas fa-upload"></i>
+                                    </span>
+                                    <span class="file-label">
+                                        Pick a Photo&hellip;
+                                    </span>
+                                </span>
+                            </label>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -79,8 +88,14 @@
        
         <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
             <div class="box">
-                 
-
+                 <p>In Modal</p>
+                <photo-grabber 
+                    ref="camera"
+                    :cropWidth="cropWidth"
+                    :cropHeight="cropHeight"
+                    photoCropped="onCroppedPhoto"
+                    error="onCameraError">
+                </photo-grabber>
             </div>
         </modal>
        
@@ -91,17 +106,14 @@
 // TODO: figure out how to distinguish image drops vs prop drops
 // How to clear out the prop being dragged
 
-import Camera from '../components/Camera.vue';
 import Modal from '../components/Modal.vue';
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
+import PhotoGrabber from '../components/PhotoGrabber.vue';
 
 export default {
     name: "PhotoMoment",
     components: {
-        Camera,
         Modal,
-        VueCropper,
+        PhotoGrabber,
     },
     data: function() {
         return {
@@ -267,26 +279,16 @@ export default {
         },
 
         // Webcam Methods and Events
-        async openCamera() {
-            await this.$refs.new_camera.openCamera();
-        },
-        onPhotoTaken(photo) {
-            this.userImage = photo;
-            this.needsCrop = true;
-        },
-        onCameraOpen() {
-            this.is_camera_open = true;
+        openCamera() {
             this.show_camera_modal = true;
         },
-        onCameraClose() {
-            this.is_camera_open = false;
+        onCroppedPhoto(photo) {
+            this.userImage = photo;
             this.show_camera_modal = false;
         },
         onCameraError(err_msg) {
             this.errors = err_msg;
         },
-
-        
        
     },
     computed: {
