@@ -93,7 +93,7 @@
                     ref="camera"
                     :cropWidth="cropWidth"
                     :cropHeight="cropHeight"
-                    photoCropped="onCroppedPhoto"
+                    @photoCropped="onCroppedPhoto"
                     error="onCameraError">
                 </photo-grabber>
             </div>
@@ -283,6 +283,7 @@ export default {
             this.show_camera_modal = true;
         },
         onCroppedPhoto(photo) {
+            console.log('Photo Moment onCroppedPhoto');
             this.userImage = photo;
             this.show_camera_modal = false;
         },

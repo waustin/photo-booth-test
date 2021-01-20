@@ -101,12 +101,11 @@ export default {
         // Image Cropping
         onCropClick() {
             // this needs to emit back the final photo
-            console.log('on crop click');
+            console.log('PhotoGrabber onCropClick');
+
             this.croppedImage = this.$refs.cropper.getCroppedCanvas({
                 width: this.cropWidth, height: this.cropHeight
             }).toDataURL();
-
-            this.needsCrop = false;
 
             this.$emit('photoCropped', this.croppedImage);
         }, 
