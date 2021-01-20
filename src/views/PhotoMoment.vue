@@ -1,90 +1,94 @@
 <template>
     <div class="photo-moment">
-        <h1 class="title mb-4">Photo Moment Test</h1>
-        <div class="columns">
-            <div class="column">
-                <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
-                    <div class="field is-grouped">
-                        <p class="control">
-                            <button type="button" @click="openCamera"
-                                class="button is-info">
-                                    Open Camera
-                            </button>
-                        </p>
-                        
-                        <div class="control file">
-                            <label class="file-label">
-                                <input class="file-input" type="file" @change="pickPhoto">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i class="fas fa-upload"></i>
+        <header class="photo-moment-header">
+            <h1 class="title">Photo Moment Test</h1>
+        </header>
+        <section class="section">
+            <div class="columns">
+                <div class="column">
+                    <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
+                        <div class="field is-grouped">
+                            <p class="control">
+                                <button type="button" @click="openCamera"
+                                    class="button is-info">
+                                        Open Camera
+                                </button>
+                            </p>
+                            
+                            <div class="control file">
+                                <label class="file-label">
+                                    <input class="file-input" type="file" @change="pickPhoto">
+                                    <span class="file-cta">
+                                        <span class="file-icon">
+                                            <i class="fas fa-upload"></i>
+                                        </span>
+                                        <span class="file-label">
+                                            Pick a Photo&hellip;
+                                        </span>
                                     </span>
-                                    <span class="file-label">
-                                        Pick a Photo&hellip;
-                                    </span>
-                                </span>
-                            </label>
+                                </label>
+                            </div>
+                            
                         </div>
-                        
                     </div>
-                </div>
 
-               
-
-                <div class="photo-stage-wrapper" v-show="showPhotoStage">
-                    <div class="photo-bg stage mb-4" ref="stage" id="stage"
-                        @dragover.stop.prevent="dragOverStage"
-                        @dragleave.stop.prevent="dragLeaveStage"
-                        @drop.stop.prevent="dropStage($event)">
-
-                        <img class="bg-image" v-if="userImage && !needsCrop" :src="userImage" />
-
-                        <div v-if="!userImage" class="instructions">
-                            <h1>You can drop a photo here</h1>
-                        </div>
-
-                        <!-- on stage images -->
-                        <img class="prop-stage-image"
-                            v-for="(prop, idx) in props_on_stage"
-                            :key="'stage-prop-' + idx" 
-                            :src="prop.src" 
-                            :style="{ left: prop.x + '%', top: prop.y + '%' }"
-                            draggable="true"
-                            @dragstart="startPropMoveDrag($event, prop, idx)"
-                            @dragend="stopPropMoveDrag($event, prop, idx)" />
-                    </div>
-                </div>
-
-                <div v-if="is_prop_move_dragging" class="has-background-danger-dark delete-spot" 
-                    @dragover.stop.prevent="dragOverDelete"
-                    @dragleave.stop.prevent="dragLeaveDelete"
-                    @drop.stop.prevent="dropDelete($event)">
-                    <h4>Drop Prop Here to Delete</h4>
-                </div>
-
-            </div>
-            <div class="column is-two-fifths sidebar">
-                <h4>Drag A Prop onto the Stage</h4>
-                <div class="prop-list mb-2">
-                    <img v-for="(prop, idx) in prop_images" 
-                         :key="'prop-' + idx" :src="prop" 
-                         @dragstart="startPropAddDrag($event, prop)"
-                         @dragend="stopPropAddDrag($event, prop)"
-                         draggable="true"/>
-                </div>
                 
-                <button type="button" class="button is-primary"
-                        @click="saveImage">Save</button>
 
-                <hr>
-                <div v-if="outImage" class="out-image-wrapper mt-2">
-                    <img :src="outImage" class="mb-3"/>
-                    <a download="your-image.png" 
-                        :href="outImage" class="button is-success">Download Image</a>
+                    <div class="photo-stage-wrapper" v-show="showPhotoStage">
+                        <div class="photo-bg stage mb-4" ref="stage" id="stage"
+                            @dragover.stop.prevent="dragOverStage"
+                            @dragleave.stop.prevent="dragLeaveStage"
+                            @drop.stop.prevent="dropStage($event)">
+
+                            <img class="bg-image" v-if="userImage && !needsCrop" :src="userImage" />
+
+                            <div v-if="!userImage" class="instructions">
+                                <h1>You can drop a photo here</h1>
+                            </div>
+
+                            <!-- on stage images -->
+                            <img class="prop-stage-image"
+                                v-for="(prop, idx) in props_on_stage"
+                                :key="'stage-prop-' + idx" 
+                                :src="prop.src" 
+                                :style="{ left: prop.x + '%', top: prop.y + '%' }"
+                                draggable="true"
+                                @dragstart="startPropMoveDrag($event, prop, idx)"
+                                @dragend="stopPropMoveDrag($event, prop, idx)" />
+                        </div>
+                    </div>
+
+                    <div v-if="is_prop_move_dragging" class="has-background-danger-dark delete-spot" 
+                        @dragover.stop.prevent="dragOverDelete"
+                        @dragleave.stop.prevent="dragLeaveDelete"
+                        @drop.stop.prevent="dropDelete($event)">
+                        <h4>Drop Prop Here to Delete</h4>
+                    </div>
+
+                </div>
+                <div class="column is-two-fifths sidebar">
+                    <h4>Drag A Prop onto the Stage</h4>
+                    <div class="prop-list mb-2">
+                        <img v-for="(prop, idx) in prop_images" 
+                            :key="'prop-' + idx" :src="prop" 
+                            @dragstart="startPropAddDrag($event, prop)"
+                            @dragend="stopPropAddDrag($event, prop)"
+                            draggable="true"/>
+                    </div>
+                    
+                    <button type="button" class="button is-primary"
+                            @click="saveImage">Save</button>
+
+                    <hr>
+                    <div v-if="outImage" class="out-image-wrapper mt-2">
+                        <img :src="outImage" class="mb-3"/>
+                        <a download="your-image.png" 
+                            :href="outImage" class="button is-success">Download Image</a>
+                    </div>
                 </div>
             </div>
-        </div>
-       
+        </section>
+
         <modal ref="modalCamera" :show="show_camera_modal" @close="show_camera_modal = false">
             <div class="box">
                 <photo-grabber 
@@ -96,7 +100,6 @@
                 </photo-grabber>
             </div>
         </modal>
-       
     </div>
 </template>
 
@@ -305,6 +308,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+    .photo-moment-header {
+        margin-bottom: 2rem;
+    }
+    .sidebar {
+        background-color: #EFEAED;
+        border: 1px solid #CCC;
+        padding: 2rem;
+    }
 
     .photo-bg {
         position: relative;
@@ -317,6 +328,10 @@ export default {
         flex-direction: column;
         align-content: center;
         justify-content: center;
+
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
     
         img {
             max-width: 100%;
