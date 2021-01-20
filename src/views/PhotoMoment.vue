@@ -46,7 +46,12 @@
                                 <h1>You can drop a photo here</h1>
                             </div>
 
-                            <!-- on stage images -->
+                            <img v-if="selected_overlay"
+                                :key="selected_overlay.id"
+                                :src="selected_overlay.src"
+                                class="overlay-img"/>
+
+                            <!-- on stage props
                             <img class="prop-stage-image"
                                 v-for="(prop, idx) in props_on_stage"
                                 :key="'stage-prop-' + idx" 
@@ -55,6 +60,7 @@
                                 draggable="true"
                                 @dragstart="startPropMoveDrag($event, prop, idx)"
                                 @dragend="stopPropMoveDrag($event, prop, idx)" />
+                            -->
                         </div>
                     </div>
 
@@ -72,7 +78,7 @@
                         <img v-for="(overlay, idx) in overlay_images" 
                             :key="'overlay-' + idx" :src="overlay" 
                             class="overlay-img"
-                            @click="onOverlayClick($event, overlay)"/>
+                            @click="onOverlayClick($event, overlay, idx)"/>
                     </div>
 
                     <!---
@@ -164,9 +170,10 @@ export default {
                 './images/overlays/beach.png',
                 './images/overlays/hills.png'
             ],
-            overlays_on_stage: [
-                // put the overlays here when we stick them on stage
-            ]
+            selected_overlay: {
+                src: null,
+                id: null,
+            }
         }
     },
     methods: {
@@ -204,8 +211,10 @@ export default {
         },
 
         // Overlay methods
-        onOverlayClick(event, overlay) {
+        onOverlayClick(event, overlay, idx) {
             console.log('onOverlayClick');
+            this.selected_overlay.src = overlay;
+            this.selected_overlay.id = 'overlay-' + idx;
         },
 
         // Prop on Stage Drag Events
@@ -358,6 +367,15 @@ export default {
             display: block;
             width: 100%;
             height: auto;
+        }
+
+        img.overlay-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            max-width: 100%;
+            z-index: 1000;
         }
         
         img.prop-stage-image {
