@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link :to="{ name: 'photo-moment' }">Photo Moment</router-link> |
-      <router-link :to="{ name: 'webcam-demo' }">Webcam Demo</router-link> | 
-      <router-link to="/background-remove">Background Test</router-link> | 
-      <router-link :to="{ name: 'crop-test' }">Crop Test</router-link>
+      <div id="nav" v-show="false">
+        <router-link :to="{ name: 'photo-moment' }">Photo Moment</router-link> |
+        <router-link :to="{ name: 'webcam-demo' }">Webcam Demo</router-link> | 
+        <router-link to="/background-remove">Background Test</router-link> | 
+        <router-link :to="{ name: 'crop-test' }">Crop Test</router-link>
 
-    </div>
-    <section class="section">
-      <router-view />
-    </section>
+      </div>
+      <section class="section">
+          <router-view />
+      </section>
   </div>
 </template>
 

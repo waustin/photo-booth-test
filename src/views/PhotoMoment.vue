@@ -1,6 +1,6 @@
 <template>
     <div class="photo-moment">
-        <h1 class="mb-2">Photo Moment Test</h1>
+        <h1 class="title mb-4">Photo Moment Test</h1>
         <div class="columns">
             <div class="column">
                 <div class="stage-nav is-flex felx-direction-row is-justify-content-center is-align-content-center mb-4">
