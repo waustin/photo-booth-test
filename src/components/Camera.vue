@@ -3,7 +3,7 @@
         <div class="camera-image-wrapper">
             <video 
                 class="camera"
-                ref="camera" autoplay>
+                ref="camera" autoplay muted playsinline disablePictureInPicture>
             </video>
         </div>
 
