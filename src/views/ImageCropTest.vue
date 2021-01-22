@@ -21,6 +21,8 @@
                     :auto-crop-area=0.5
                     :min-container-width=250
                     :min-crop-box-height=100
+                    :min-crop-box-width=100
+                    :start-size-height=100
                     @ready="cropperReady">
                 </vue-cropper>
 <!--

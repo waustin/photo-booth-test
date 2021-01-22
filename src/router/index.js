@@ -28,6 +28,7 @@ const routes = [
     name: 'crop-test',
     component: ImageCropTest,
   },
+
 ]
 
 const router = new VueRouter({
