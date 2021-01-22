@@ -1,5 +1,10 @@
 <template>
     <div class="photo-grabber">
+        <div v-if="error" class="notification is-danger mb-2">
+            <button type="button" class="delete" @click="$emit('cancel')">Close</button>
+            {{error}}
+        </div>
+        
         <camera ref="camera" 
             @photoTaken="onPhotoTaken"
             @cameraOpen="onCameraOpen"
@@ -61,7 +66,7 @@ export default {
     data() {
         return {
             is_camera_open: false,
-            errors: null,
+            error: null,
             cameraImage: null,
             croppedImage: null,
         }
@@ -74,7 +79,7 @@ export default {
     created() {
         console.log('Photo Grabber Created');
         this.is_camera_open = false;
-        this.errors = null;
+        this.error = null;
         this.cameraImage = null;
         this.croppedImage = null;
     },
@@ -82,13 +87,19 @@ export default {
         console.log('Photo Grabber Mounted');
         this.$refs.camera.openCamera();
     },
+    beforeDestroy() {
+        this.$refs.camera.closeCamera();
+    },
     methods: {
         cameraInit() {
             this.is_camera_open = false;
-            this.errors = null;
+            this.error = null;
             this.cameraImage = null;
             this.croppedImage = null;
             this.$refs.camera.openCamera();
+        },
+        cameraClose() {
+            this.$refs.camera.closeCamera();
         },
         // Camera Events
         onPhotoTaken(photo) {
@@ -104,7 +115,8 @@ export default {
             this.is_camera_open = false;
         },
         onCameraError(err_msg) {
-            this.errors = err_msg;
+            this.error = err_msg;
+            this.$emit('error', err_msg);
         },
 
         // Image Cropping

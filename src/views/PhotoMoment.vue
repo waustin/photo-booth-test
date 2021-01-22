@@ -111,7 +111,8 @@
                     :cropWidth="cropWidth"
                     :cropHeight="cropHeight"
                     @photoCropped="onCroppedPhoto"
-                    error="onCameraError">
+                    @error="onCameraError"
+                    @cancel="closeCamera">
                 </photo-grabber>
             </div>
         </modal>
@@ -119,8 +120,7 @@
 </template>
 
 <script>
-// TODO: figure out how to distinguish image drops vs prop drops
-// How to clear out the prop being dragged
+// TODO: disable camera on modal close. init on open. Don't relay on vue v-if
 
 import Modal from '../components/Modal.vue';
 import PhotoGrabber from '../components/PhotoGrabber.vue';
@@ -311,6 +311,9 @@ export default {
         // Webcam Methods and Events
         openCamera() {
             this.show_camera_modal = true;
+        },
+        closeCamera() {
+            this.show_camera_modal = false;
         },
         onCroppedPhoto(photo) {
             console.log('Photo Moment onCroppedPhoto');

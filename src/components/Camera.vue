@@ -109,7 +109,6 @@ export default {
 
                 this.error = err_msg;
                 this.$emit('cameraError', err_msg);
-                alert(err_msg);
             }
         },
         async closeCamera() {
@@ -117,11 +116,13 @@ export default {
             this.error = null; // clear camera errors
             this.is_camera_loading = false;
             this.is_camera_open = false;
-
-            let tracks = this.$refs.camera.srcObject.getTracks();
-			tracks.forEach(track => {
-				track.stop();
-            });
+            
+            if(this.$refs.camera.srcObject !== null) {
+                let tracks = this.$refs.camera.srcObject.getTracks();
+                tracks.forEach(track => {
+                    track.stop();
+                });
+            }
             
             this.$emit('cameraClose');
         },

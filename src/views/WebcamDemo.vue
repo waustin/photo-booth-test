@@ -4,6 +4,14 @@
 
         <div class="columns">
             <div class="column">
+                <h4 class="is-size-4 mb-2">Input type File capture=camera</h4>
+                <input type="file" capture="user" accept="image/*"/>
+            </div>
+        </div>
+
+
+        <div class="columns">
+            <div class="column">
                 <button type="button" class="button" :class="{ 'is-primary' : !isCameraOpen, 'is-danger' : isCameraOpen}" @click="toggleCamera">
                     <span v-if="!isCameraOpen">Open Camera</span>
                     <span v-else>Close Camera</span>
