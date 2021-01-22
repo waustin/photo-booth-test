@@ -27,7 +27,7 @@
                 :rotatable=false
                 :view-mode=2
                 drag-mode="crop"
-                :auto-crop-area=0.5
+                :auto-crop-area=1
                 :min-container-width=250
                 :min-container-height=300
                 :min-canvas-height=400

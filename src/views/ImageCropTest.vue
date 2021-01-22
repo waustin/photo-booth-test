@@ -18,7 +18,7 @@
                     :rotatable=false
                     :view-mode=2
                     drag-mode="crop"
-                    :auto-crop-area=0.5
+                    :auto-crop-area=1
                     :min-container-width=250
                     :min-crop-box-height=100
                     :min-crop-box-width=100
@@ -70,6 +70,7 @@ export default {
         cropperReady() {
             console.log('cropper ready')
             //this.$refs.cropper.setCropBoxData(200, 300);
+           // this.$refs.cropper.setData({height: 199900});
         }
     },
     computed: {
